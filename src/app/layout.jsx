@@ -1,14 +1,14 @@
 import "./globals.css";
 
 export const metadata = {
-  title: "Tạo ứng dụng Next.js",
-  description: "Được tạo bởi create next app",
+	description: "Được tạo bởi create next app",
+	title: "Tạo ứng dụng Next.js",
 };
 
 export default function RootLayout({ children }) {
-  return (
-    <html lang="vi">
-      <body>{children}</body>
-    </html>
-  );
+	return (
+		<html lang="vi">
+			<body>{children}</body>
+		</html>
+	);
 }
