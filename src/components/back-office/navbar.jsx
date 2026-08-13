@@ -63,7 +63,7 @@ export default function Navbar({ onMenuClick }) {
 	}
 
 	return (
-		<header className="fixed top-0 right-0 left-0 z-40 flex h-16 items-center justify-between border-slate-700/60 border-b bg-slate-900 px-4 text-slate-50 lg:left-60 lg:px-8 dark:bg-slate-950">
+		<header className="fixed top-0 right-0 left-0 z-40 flex h-16 items-center justify-between border-slate-700/60 border-b bg-slate-900 px-4 text-slate-50 lg:left-64 lg:px-8 dark:bg-slate-950">
 			<button
 				aria-label="Mở menu"
 				className="rounded-md p-2 transition-colors hover:bg-slate-700 lg:hidden"

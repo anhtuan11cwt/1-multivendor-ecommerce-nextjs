@@ -5,6 +5,7 @@ import {
 	FolderTree,
 	Image,
 	LayoutDashboard,
+	LogOut,
 	Package,
 	Settings,
 	ShoppingCart,
@@ -60,7 +61,7 @@ export default function Sidebar({ open, onClose }) {
 			)}
 			<aside
 				className={cn(
-					"fixed top-0 left-0 z-50 flex h-screen w-60 flex-col bg-slate-800 text-slate-50 shadow-xl transition-transform duration-300 dark:bg-slate-900",
+					"fixed top-0 left-0 z-50 flex h-screen w-64 flex-col bg-slate-800 text-slate-50 shadow-xl transition-transform duration-300 dark:bg-slate-900",
 					open ? "translate-x-0" : "-translate-x-full",
 					"lg:z-30 lg:translate-x-0",
 				)}
@@ -123,6 +124,16 @@ export default function Sidebar({ open, onClose }) {
 						</NavLink>
 					))}
 				</nav>
+				<div className="border-slate-700/60 border-t p-4">
+					<button
+						className="flex w-full items-center gap-3 rounded-md px-3 py-2.5 font-medium text-red-400 text-sm transition-colors hover:bg-red-500/10 hover:text-red-300"
+						onClick={onClose}
+						type="button"
+					>
+						<LogOut className="size-4 shrink-0" />
+						Đăng xuất
+					</button>
+				</div>
 			</aside>
 		</>
 	);

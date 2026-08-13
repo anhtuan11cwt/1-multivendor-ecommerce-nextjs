@@ -29,7 +29,7 @@ export default function AdminShell({ children }) {
 		<div className="min-h-screen bg-slate-100 dark:bg-slate-900">
 			<Navbar onMenuClick={() => setSidebarOpen(true)} />
 			<Sidebar onClose={() => setSidebarOpen(false)} open={sidebarOpen} />
-			<main className="min-h-screen pt-16 lg:pl-60">
+			<main className="min-h-screen pt-16 lg:pl-64">
 				<div className="p-4 lg:p-8">{children}</div>
 			</main>
 		</div>
