@@ -1,51 +1,11 @@
 "use client";
 
 import { Bell, Menu, Moon, Sun, User } from "lucide-react";
-import { useEffect, useSyncExternalStore } from "react";
 
-function subscribeTheme(callback) {
-	const observer = new MutationObserver(callback);
-	observer.observe(document.documentElement, {
-		attributeFilter: ["class"],
-		attributes: true,
-	});
-	return () => observer.disconnect();
-}
-
-function getThemeSnapshot() {
-	return document.documentElement.classList.contains("dark");
-}
-
-function getThemeServerSnapshot() {
-	return false;
-}
-
-const THEME_COOKIE = (value) =>
-	`theme=${value}; path=/; max-age=31536000; samesite=lax`;
+import { useTheme } from "@/lib/use-theme";
 
 export default function Navbar({ onMenuClick }) {
-	const dark = useSyncExternalStore(
-		subscribeTheme,
-		getThemeSnapshot,
-		getThemeServerSnapshot,
-	);
-
-	useEffect(() => {
-		if (document.cookie.includes("theme=")) return;
-		const prefersDark = window.matchMedia(
-			"(prefers-color-scheme: dark)",
-		).matches;
-		document.documentElement.classList.toggle("dark", prefersDark);
-		// biome-ignore lint/suspicious/noDocumentCookie: theme phải lưu trong cookie để SSR đọc được
-		document.cookie = THEME_COOKIE(prefersDark ? "dark" : "light");
-	}, []);
-
-	function toggleTheme() {
-		const next = !dark;
-		document.documentElement.classList.toggle("dark", next);
-		// biome-ignore lint/suspicious/noDocumentCookie: theme phải lưu trong cookie để SSR đọc được
-		document.cookie = THEME_COOKIE(next ? "dark" : "light");
-	}
+	const { dark, toggleTheme } = useTheme();
 
 	return (
 		<header className="fixed top-0 right-0 left-0 z-40 flex h-16 items-center justify-between border-slate-700/60 border-b bg-slate-900 px-4 text-slate-50 lg:left-60 lg:px-8 dark:bg-slate-950">
