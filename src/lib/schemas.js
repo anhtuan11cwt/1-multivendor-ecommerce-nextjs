@@ -58,7 +58,7 @@ export const categorySchema = z.object({
 			message: "Mô tả tối đa 500 ký tự",
 		}),
 	imageUrl: z.string().optional(),
-	market: z.string().optional(),
+	marketIds: z.array(z.string()).optional(),
 	slug: z.string().optional(),
 	title: z
 		.string()
@@ -130,3 +130,57 @@ export const marketSchema = z.object({
 });
 
 export const marketFormSchema = marketSchema.omit({ slug: true });
+
+const optionalTag = z
+	.string()
+	.trim()
+	.min(1, "Tag không được để trống")
+	.max(20, "Tag tối đa 20 ký tự");
+
+export const productSchema = z.object({
+	barcode: z.string().optional(),
+	categoryId: z.string().min(1, "Vui lòng chọn danh mục"),
+	description: z
+		.string()
+		.optional()
+		.refine((value) => !value || value.length <= 1000, {
+			message: "Mô tả tối đa 1000 ký tự",
+		}),
+	farmerId: z.string().min(1, "Vui lòng chọn nông dân"),
+	imageUrl: z.string().optional(),
+	price: z.preprocess(
+		(value) => {
+			if (value === "" || value === null || value === undefined) return 0;
+			return Number(value);
+		},
+		z
+			.number({ message: "Giá phải là số" })
+			.refine((value) => !Number.isNaN(value), "Giá phải là số")
+			.min(15000, "Giá gốc tối thiểu 15.000đ"),
+	),
+	salePrice: z.preprocess(
+		(value) => {
+			if (value === "" || value === null || value === undefined) {
+				return undefined;
+			}
+			return Number(value);
+		},
+		z
+			.number({ message: "Giá khuyến mãi phải là số" })
+			.refine((value) => !Number.isNaN(value), "Giá khuyến mãi phải là số")
+			.min(0, "Giá khuyến mãi không được âm")
+			.optional(),
+	),
+	sku: z.string().optional(),
+	slug: z.string().min(1, "Slug là bắt buộc"),
+	tags: z.array(optionalTag).optional(),
+	title: z
+		.string()
+		.min(1, "Tên sản phẩm là bắt buộc")
+		.max(100, "Tên sản phẩm tối đa 100 ký tự"),
+});
+
+export const productFormSchema = productSchema.omit({
+	imageUrl: true,
+	slug: true,
+});

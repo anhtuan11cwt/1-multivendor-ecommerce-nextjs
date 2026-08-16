@@ -7,6 +7,7 @@ export default function SelectInput({
 	isRequired = false,
 	disabled = false,
 	placeholder = "Chọn...",
+	multiple = false,
 	className,
 }) {
 	return (
@@ -20,23 +21,15 @@ export default function SelectInput({
 			</label>
 			<select
 				aria-label={label}
+				className={`w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-slate-900 text-sm outline-none ring-slate-500 transition [color-scheme:light] focus:border-slate-500 focus:ring-2 disabled:cursor-not-allowed disabled:opacity-50 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100 dark:ring-slate-500 dark:focus:border-slate-500 dark:[color-scheme:dark] ${multiple ? "min-h-[110px]" : ""}`}
 				disabled={disabled}
 				id={name}
+				multiple={multiple}
 				{...register(name)}
-				className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-slate-900 text-sm outline-none ring-slate-500 transition focus:border-slate-500 focus:ring-2 disabled:cursor-not-allowed disabled:opacity-50 dark:border-slate-600 dark:bg-transparent dark:text-slate-100 dark:ring-slate-500 dark:focus:border-slate-500"
 			>
-				<option
-					className="bg-white text-slate-900 dark:bg-slate-700 dark:text-slate-100"
-					value=""
-				>
-					{placeholder}
-				</option>
+				{!multiple && <option value="">{placeholder}</option>}
 				{options.map((option) => (
-					<option
-						className="bg-white text-slate-900 dark:bg-slate-700 dark:text-slate-100"
-						key={option.id}
-						value={option.id}
-					>
+					<option key={option.id} value={option.id}>
 						{option.title}
 					</option>
 				))}

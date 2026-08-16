@@ -85,10 +85,10 @@ export default function NewCategoryPage() {
 					<SelectInput
 						disabled={loading}
 						errors={errors}
-						label="Chọn chợ"
-						name="market"
+						label="Chợ liên kết"
+						multiple
+						name="marketIds"
 						options={marketOptions}
-						placeholder="Chọn chợ..."
 						register={register}
 					/>
 					<TextAreaInput
