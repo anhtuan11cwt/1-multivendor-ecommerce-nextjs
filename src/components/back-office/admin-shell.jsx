@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from "react";
 
+import { Toaster } from "react-hot-toast";
+
 import Navbar from "@/components/back-office/navbar";
 import Sidebar from "@/components/back-office/sidebar";
 
@@ -27,6 +29,7 @@ export default function AdminShell({ children }) {
 
 	return (
 		<div className="min-h-screen bg-slate-100 dark:bg-slate-900">
+			<Toaster duration={2000} position="top-center" />
 			<Navbar onMenuClick={() => setSidebarOpen(true)} />
 			<Sidebar onClose={() => setSidebarOpen(false)} open={sidebarOpen} />
 			<main className="min-h-screen pt-16 lg:pl-64">
