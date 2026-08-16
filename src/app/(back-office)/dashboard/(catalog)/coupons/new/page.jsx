@@ -2,50 +2,53 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
-import { useForm } from "react-hook-form";
+import { useEffect, useState } from "react";
+import { useForm, useWatch } from "react-hook-form";
 
 import FormHeader from "@/components/back-office/form-inputs/form-header";
-import ImageInput from "@/components/back-office/form-inputs/image-input";
 import SubmitButton from "@/components/back-office/form-inputs/submit-button";
-import TextAreaInput from "@/components/back-office/form-inputs/text-area-input";
 import TextInput from "@/components/back-office/form-inputs/text-input";
 import { makePostRequest } from "@/lib/api-request";
-import { generateSlug } from "@/lib/generate-slug";
-import { categorySchema } from "@/lib/schemas";
-import { uploadImageToCloudinary } from "@/lib/upload-image";
+import { generateCouponCode } from "@/lib/generate-coupon-code";
+import { couponSchema, getTodayString } from "@/lib/schemas";
 
-export default function NewCategoryPage() {
+export default function NewCouponPage() {
 	const router = useRouter();
 	const {
 		register,
+		setValue,
+		control,
 		handleSubmit,
 		formState: { errors },
 	} = useForm({
-		resolver: zodResolver(categorySchema),
+		resolver: zodResolver(couponSchema),
 	});
-	const [file, setFile] = useState(null);
 	const [loading, setLoading] = useState(false);
+
+	const watchedTitle = useWatch({ control, name: "title" });
+	const watchedExpiryDate = useWatch({ control, name: "expiryDate" });
+	const generatedCode = generateCouponCode(watchedTitle, watchedExpiryDate);
+
+	useEffect(() => {
+		setValue("couponCode", generatedCode);
+	}, [generatedCode, setValue]);
 
 	async function onSubmit(data) {
 		setLoading(true);
 		try {
 			await new Promise((r) => setTimeout(r, 2000));
-			let imageUrl = "";
-			if (file) {
-				imageUrl = await uploadImageToCloudinary(file, "categories");
-				if (!imageUrl) return;
-			}
-			const slug = generateSlug(data.title);
-			const payload = { ...data, imageUrl, slug };
+			const payload = {
+				...data,
+				couponCode: generateCouponCode(data.title, data.expiryDate),
+			};
 			const result = await makePostRequest({
 				data: payload,
-				endpoint: "api/categories",
-				resourceName: "Danh mục",
+				endpoint: "api/coupons",
+				resourceName: "Mã giảm giá",
 				setLoading,
 			});
 			if (result) {
-				router.push("/dashboard/categories");
+				router.push("/dashboard/coupons");
 			}
 		} finally {
 			setLoading(false);
@@ -54,7 +57,7 @@ export default function NewCategoryPage() {
 
 	return (
 		<div className="mx-auto max-w-3xl">
-			<FormHeader isLoading={loading} title="Tạo danh mục mới" />
+			<FormHeader isLoading={loading} title="Tạo mã giảm giá mới" />
 
 			<form
 				className="rounded-lg bg-white p-6 shadow dark:bg-slate-800"
@@ -66,29 +69,32 @@ export default function NewCategoryPage() {
 						disabled={loading}
 						errors={errors}
 						isRequired
-						label="Tên danh mục"
+						label="Tiêu đề chiến dịch"
 						name="title"
 						register={register}
 					/>
-					<ImageInput
-						disabled={loading}
-						file={file}
-						label="Hình ảnh danh mục"
-						setFile={setFile}
+					<TextInput
+						disabled
+						errors={errors}
+						label="Mã giảm giá"
+						name="couponCode"
+						register={register}
 					/>
-					<TextAreaInput
-						className="col-span-2"
+					<TextInput
 						disabled={loading}
 						errors={errors}
-						label="Mô tả"
-						name="description"
+						isRequired
+						label="Ngày hết hạn"
+						min={getTodayString()}
+						name="expiryDate"
 						register={register}
+						type="date"
 					/>
 				</div>
 
 				<div className="mt-6 flex justify-end">
 					<SubmitButton
-						buttonTitle="Tạo danh mục"
+						buttonTitle="Tạo mã giảm giá"
 						isLoading={loading}
 						loadingButtonTitle="Đang tạo..."
 					/>

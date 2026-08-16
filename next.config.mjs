@@ -1,6 +1,15 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-	/* config options here */
+	images: {
+		remotePatterns: [
+			{
+				hostname: "res.cloudinary.com",
+				pathname: "/**",
+				protocol: "https",
+			},
+		],
+	},
+	/* tùy chọn cấu hình tại đây */
 	reactCompiler: true,
 };
 

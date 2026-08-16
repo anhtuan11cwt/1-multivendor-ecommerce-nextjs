@@ -1,14 +1,19 @@
 "use client";
 
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useParams, useRouter } from "next/navigation";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
-import toast from "react-hot-toast";
 
 import FormHeader from "@/components/back-office/form-inputs/form-header";
+import ImageInput from "@/components/back-office/form-inputs/image-input";
 import SubmitButton from "@/components/back-office/form-inputs/submit-button";
 import TextAreaInput from "@/components/back-office/form-inputs/text-area-input";
 import TextInput from "@/components/back-office/form-inputs/text-input";
+import { makePutRequest } from "@/lib/api-request";
 import { generateSlug } from "@/lib/generate-slug";
+import { categorySchema } from "@/lib/schemas";
+import { uploadImageToCloudinary } from "@/lib/upload-image";
 
 const mockData = {
 	1: {
@@ -31,27 +36,46 @@ export default function UpdateCategoryPage() {
 	const {
 		register,
 		handleSubmit,
-		formState: { errors, isSubmitting },
+		formState: { errors },
 	} = useForm({
 		defaultValues: {
 			description: category.description,
 			title: category.title,
 		},
+		resolver: zodResolver(categorySchema),
 	});
+	const [file, setFile] = useState(null);
+	const [loading, setLoading] = useState(false);
 
 	async function onSubmit(data) {
-		const slug = generateSlug(data.title);
-		const payload = { id, ...data, slug };
-		await new Promise((r) => setTimeout(r, 2000));
-		console.log("Update category:", payload);
-		toast.success("Cập nhật danh mục thành công!");
-		router.push("/dashboard/categories");
+		setLoading(true);
+		try {
+			await new Promise((r) => setTimeout(r, 2000));
+			let imageUrl = "";
+			if (file) {
+				imageUrl = await uploadImageToCloudinary(file, "categories");
+				if (!imageUrl) return;
+			}
+			const slug = generateSlug(data.title);
+			const payload = { id, ...data, imageUrl, slug };
+			const result = await makePutRequest({
+				data: payload,
+				endpoint: "api/categories",
+				resourceName: "Danh mục",
+				setLoading,
+			});
+			if (result) {
+				router.push("/dashboard/categories");
+			}
+		} finally {
+			setLoading(false);
+		}
 	}
 
 	return (
 		<div className="mx-auto max-w-3xl">
 			<FormHeader
-				isLoading={isSubmitting}
+				isLoading={loading}
 				title={`Chỉnh sửa danh mục - ${category.title}`}
 			/>
 
@@ -62,16 +86,17 @@ export default function UpdateCategoryPage() {
 				<div className="grid grid-cols-2 gap-6">
 					<TextInput
 						className="col-span-2"
-						disabled={isSubmitting}
+						disabled={loading}
 						errors={errors}
 						isRequired
 						label="Tên danh mục"
 						name="title"
 						register={register}
 					/>
+					<ImageInput file={file} label="Hình ảnh danh mục" setFile={setFile} />
 					<TextAreaInput
 						className="col-span-2"
-						disabled={isSubmitting}
+						disabled={loading}
 						errors={errors}
 						label="Mô tả"
 						name="description"
@@ -82,12 +107,12 @@ export default function UpdateCategoryPage() {
 				<div className="mt-6 flex justify-end gap-3">
 					<SubmitButton
 						buttonTitle="Cập nhật"
-						isLoading={isSubmitting}
+						isLoading={loading}
 						loadingButtonTitle="Đang cập nhật..."
 					/>
 					<button
 						className="inline-flex items-center gap-2 rounded-lg border border-slate-300 bg-white px-6 py-2.5 font-medium text-slate-700 text-sm shadow-sm transition hover:bg-slate-50 disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 dark:border-slate-600 dark:bg-transparent dark:text-slate-300 dark:hover:bg-slate-700"
-						disabled={isSubmitting}
+						disabled={loading}
 						onClick={() => router.back()}
 						type="button"
 					>

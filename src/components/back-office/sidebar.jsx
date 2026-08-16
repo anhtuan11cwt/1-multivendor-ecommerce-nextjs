@@ -9,7 +9,6 @@ import {
 	Package,
 	Settings,
 	ShoppingCart,
-	SlidersHorizontal,
 	Store,
 	TicketPercent,
 	UserCog,
@@ -25,11 +24,6 @@ import { cn } from "@/lib/utils";
 const catalogItems = [
 	{ href: "/dashboard/products", icon: Package, title: "Sản phẩm" },
 	{ href: "/dashboard/categories", icon: FolderTree, title: "Danh mục" },
-	{
-		href: "/dashboard/attributes",
-		icon: SlidersHorizontal,
-		title: "Thuộc tính",
-	},
 	{ href: "/dashboard/coupons", icon: TicketPercent, title: "Mã giảm giá" },
 	{ href: "/dashboard/banners", icon: Image, title: "Banner" },
 ];
