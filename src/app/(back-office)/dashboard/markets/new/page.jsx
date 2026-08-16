@@ -4,47 +4,48 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import toast from "react-hot-toast";
 
 import FormHeader from "@/components/back-office/form-inputs/form-header";
 import ImageInput from "@/components/back-office/form-inputs/image-input";
 import SubmitButton from "@/components/back-office/form-inputs/submit-button";
+import TextAreaInput from "@/components/back-office/form-inputs/text-area-input";
 import TextInput from "@/components/back-office/form-inputs/text-input";
 import { makePostRequest } from "@/lib/api-request";
-import { bannerFormSchema } from "@/lib/schemas";
+import { generateSlug } from "@/lib/generate-slug";
+import { marketFormSchema } from "@/lib/schemas";
 import { uploadImageToCloudinary } from "@/lib/upload-image";
 
-export default function NewBannerPage() {
+export default function NewMarketPage() {
 	const router = useRouter();
 	const {
 		register,
 		handleSubmit,
 		formState: { errors },
 	} = useForm({
-		resolver: zodResolver(bannerFormSchema),
+		resolver: zodResolver(marketFormSchema),
 	});
 	const [file, setFile] = useState(null);
 	const [loading, setLoading] = useState(false);
 
 	async function onSubmit(data) {
-		if (!file) {
-			toast.error("Vui lòng chọn hình ảnh banner");
-			return;
-		}
 		setLoading(true);
 		try {
 			await new Promise((r) => setTimeout(r, 2000));
-			const imageUrl = await uploadImageToCloudinary(file, "banners");
-			if (!imageUrl) return;
-			const payload = { ...data, imageUrl };
+			let logo = "";
+			if (file) {
+				logo = await uploadImageToCloudinary(file, "markets");
+				if (!logo) return;
+			}
+			const slug = generateSlug(data.title);
+			const payload = { ...data, logo, slug };
 			const result = await makePostRequest({
 				data: payload,
-				endpoint: "api/banners",
-				resourceName: "Banner",
+				endpoint: "api/markets",
+				resourceName: "Chợ",
 				setLoading,
 			});
 			if (result) {
-				router.push("/dashboard/banners");
+				router.push("/dashboard/markets");
 			}
 		} finally {
 			setLoading(false);
@@ -53,7 +54,7 @@ export default function NewBannerPage() {
 
 	return (
 		<div className="mx-auto max-w-3xl">
-			<FormHeader isLoading={loading} title="Tạo banner mới" />
+			<FormHeader isLoading={loading} title="Tạo chợ mới" />
 
 			<form
 				className="rounded-lg bg-white p-6 shadow dark:bg-slate-800"
@@ -65,31 +66,30 @@ export default function NewBannerPage() {
 						disabled={loading}
 						errors={errors}
 						isRequired
-						label="Tiêu đề banner"
+						label="Tên chợ"
 						name="title"
-						register={register}
-					/>
-					<TextInput
-						className="col-span-2"
-						disabled={loading}
-						errors={errors}
-						label="Link"
-						name="link"
-						placeholder="https://... hoặc /dashboard/categories/slug"
 						register={register}
 					/>
 					<ImageInput
 						className="col-span-2"
 						disabled={loading}
 						file={file}
-						label="Hình ảnh banner"
+						label="Logo chợ"
 						setFile={setFile}
+					/>
+					<TextAreaInput
+						className="col-span-2"
+						disabled={loading}
+						errors={errors}
+						label="Mô tả"
+						name="description"
+						register={register}
 					/>
 				</div>
 
 				<div className="mt-6 flex justify-end">
 					<SubmitButton
-						buttonTitle="Tạo banner"
+						buttonTitle="Tạo chợ"
 						isLoading={loading}
 						loadingButtonTitle="Đang tạo..."
 					/>

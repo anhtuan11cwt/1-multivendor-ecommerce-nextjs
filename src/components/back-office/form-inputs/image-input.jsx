@@ -4,7 +4,13 @@ import { ImageUp, X } from "lucide-react";
 import Image from "next/image";
 import { useEffect, useMemo, useRef } from "react";
 
-export default function ImageInput({ label, file, setFile, disabled = false }) {
+export default function ImageInput({
+	label,
+	file,
+	setFile,
+	disabled = false,
+	className,
+}) {
 	const inputRef = useRef(null);
 	const previewUrl = useMemo(
 		() => (file ? URL.createObjectURL(file) : null),
@@ -29,7 +35,7 @@ export default function ImageInput({ label, file, setFile, disabled = false }) {
 	}
 
 	return (
-		<div>
+		<div className={className}>
 			<label
 				className="mb-1 block font-medium text-slate-700 text-sm dark:text-slate-300"
 				htmlFor={label}

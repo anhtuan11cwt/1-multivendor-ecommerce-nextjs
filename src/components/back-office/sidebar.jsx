@@ -25,7 +25,7 @@ const catalogItems = [
 	{ href: "/dashboard/products", icon: Package, title: "Sản phẩm" },
 	{ href: "/dashboard/categories", icon: FolderTree, title: "Danh mục" },
 	{ href: "/dashboard/coupons", icon: TicketPercent, title: "Mã giảm giá" },
-	{ href: "/dashboard/banners", icon: Image, title: "Banner" },
+	{ href: "/dashboard/banners", icon: Image, title: "Banner cửa hàng" },
 ];
 
 const navItems = [

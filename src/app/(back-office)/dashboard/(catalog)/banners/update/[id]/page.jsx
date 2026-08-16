@@ -4,40 +4,33 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useParams, useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
+import toast from "react-hot-toast";
 
 import FormHeader from "@/components/back-office/form-inputs/form-header";
 import ImageInput from "@/components/back-office/form-inputs/image-input";
-import SelectInput from "@/components/back-office/form-inputs/select-input";
 import SubmitButton from "@/components/back-office/form-inputs/submit-button";
-import TextAreaInput from "@/components/back-office/form-inputs/text-area-input";
 import TextInput from "@/components/back-office/form-inputs/text-input";
 import { makePutRequest } from "@/lib/api-request";
-import { generateSlug } from "@/lib/generate-slug";
-import { categorySchema } from "@/lib/schemas";
+import { bannerFormSchema } from "@/lib/schemas";
 import { uploadImageToCloudinary } from "@/lib/upload-image";
-
-const marketOptions = [
-	{ id: "1", title: "Chợ Sprouts Farmers" },
-	{ id: "2", title: "Chợ Long An" },
-];
 
 const mockData = {
 	1: {
-		description: "Các loại rau củ được trồng theo phương pháp hữu cơ",
-		title: "Rau củ hữu cơ",
+		link: "/dashboard/categories/rau-cu-huu-co",
+		title: "Khuyến mãi rau hữu cơ",
 	},
 	2: {
-		description: "Trái cây tươi từ các vùng miền nhiệt đới",
-		title: "Trái cây nhiệt đới",
+		link: "/dashboard/products/1",
+		title: "Trái cây nhập khẩu",
 	},
 };
 
-export default function UpdateCategoryPage() {
+export default function UpdateBannerPage() {
 	const params = useParams();
 	const router = useRouter();
 	const id = params?.id;
 
-	const category = mockData[id] || { description: "", title: "" };
+	const banner = mockData[id] || { link: "", title: "" };
 
 	const {
 		register,
@@ -45,33 +38,33 @@ export default function UpdateCategoryPage() {
 		formState: { errors },
 	} = useForm({
 		defaultValues: {
-			description: category.description,
-			title: category.title,
+			link: banner.link,
+			title: banner.title,
 		},
-		resolver: zodResolver(categorySchema),
+		resolver: zodResolver(bannerFormSchema),
 	});
 	const [file, setFile] = useState(null);
 	const [loading, setLoading] = useState(false);
 
 	async function onSubmit(data) {
+		if (!file) {
+			toast.error("Vui lòng chọn hình ảnh banner");
+			return;
+		}
 		setLoading(true);
 		try {
 			await new Promise((r) => setTimeout(r, 2000));
-			let imageUrl = "";
-			if (file) {
-				imageUrl = await uploadImageToCloudinary(file, "categories");
-				if (!imageUrl) return;
-			}
-			const slug = generateSlug(data.title);
-			const payload = { id, ...data, imageUrl, slug };
+			const imageUrl = await uploadImageToCloudinary(file, "banners");
+			if (!imageUrl) return;
+			const payload = { id, ...data, imageUrl };
 			const result = await makePutRequest({
 				data: payload,
-				endpoint: "api/categories",
-				resourceName: "Danh mục",
+				endpoint: "api/banners",
+				resourceName: "Banner",
 				setLoading,
 			});
 			if (result) {
-				router.push("/dashboard/categories");
+				router.push("/dashboard/banners");
 			}
 		} finally {
 			setLoading(false);
@@ -82,7 +75,7 @@ export default function UpdateCategoryPage() {
 		<div className="mx-auto max-w-3xl">
 			<FormHeader
 				isLoading={loading}
-				title={`Chỉnh sửa danh mục - ${category.title}`}
+				title={`Chỉnh sửa banner - ${banner.title}`}
 			/>
 
 			<form
@@ -95,32 +88,25 @@ export default function UpdateCategoryPage() {
 						disabled={loading}
 						errors={errors}
 						isRequired
-						label="Tên danh mục"
+						label="Tiêu đề banner"
 						name="title"
 						register={register}
 					/>
-					<ImageInput
-						disabled={loading}
-						file={file}
-						label="Hình ảnh danh mục"
-						setFile={setFile}
-					/>
-					<SelectInput
-						disabled={loading}
-						errors={errors}
-						label="Chọn chợ"
-						name="market"
-						options={marketOptions}
-						placeholder="Chọn chợ..."
-						register={register}
-					/>
-					<TextAreaInput
+					<TextInput
 						className="col-span-2"
 						disabled={loading}
 						errors={errors}
-						label="Mô tả"
-						name="description"
+						label="Link"
+						name="link"
+						placeholder="https://... hoặc /dashboard/categories/slug"
 						register={register}
+					/>
+					<ImageInput
+						className="col-span-2"
+						disabled={loading}
+						file={file}
+						label="Hình ảnh banner"
+						setFile={setFile}
 					/>
 				</div>
 

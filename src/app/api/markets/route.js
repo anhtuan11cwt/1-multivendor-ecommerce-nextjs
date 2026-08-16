@@ -1,11 +1,11 @@
 import { NextResponse } from "next/server";
 
-import { bannerSchema } from "@/lib/schemas";
+import { marketSchema } from "@/lib/schemas";
 
 export async function POST(request) {
 	try {
 		const body = await request.json();
-		const parsed = bannerSchema.safeParse(body);
+		const parsed = marketSchema.safeParse(body);
 		if (!parsed.success) {
 			return NextResponse.json(
 				{
@@ -15,19 +15,20 @@ export async function POST(request) {
 				{ status: 400 },
 			);
 		}
-		const { title, link, imageUrl } = parsed.data;
-		const newBanner = {
+		const { title, slug, logo, description } = parsed.data;
+		const newMarket = {
 			createdAt: new Date().toLocaleDateString("vi-VN"),
+			description: description || "",
 			id: crypto.randomUUID(),
-			imageUrl,
-			link: link || "",
+			logo: logo || "",
+			slug,
 			title,
 		};
-		console.log("Đã tạo banner:", newBanner);
-		return NextResponse.json({ data: newBanner }, { status: 201 });
+		console.log("Đã tạo chợ:", newMarket);
+		return NextResponse.json({ data: newMarket }, { status: 201 });
 	} catch (error) {
 		return NextResponse.json(
-			{ message: error.message || "Lỗi tạo banner" },
+			{ message: error.message || "Lỗi tạo chợ" },
 			{ status: 500 },
 		);
 	}
@@ -40,7 +41,7 @@ export async function PUT(request) {
 		if (!id) {
 			return NextResponse.json({ message: "ID là bắt buộc" }, { status: 400 });
 		}
-		const parsed = bannerSchema.safeParse(body);
+		const parsed = marketSchema.safeParse(body);
 		if (!parsed.success) {
 			return NextResponse.json(
 				{
@@ -50,18 +51,19 @@ export async function PUT(request) {
 				{ status: 400 },
 			);
 		}
-		const { title, link, imageUrl } = parsed.data;
-		const updatedBanner = {
+		const { title, slug, logo, description } = parsed.data;
+		const updatedMarket = {
+			description: description || "",
 			id,
-			imageUrl,
-			link: link || "",
+			logo: logo || "",
+			slug,
 			title,
 		};
-		console.log("Đã cập nhật banner:", updatedBanner);
-		return NextResponse.json({ data: updatedBanner }, { status: 200 });
+		console.log("Đã cập nhật chợ:", updatedMarket);
+		return NextResponse.json({ data: updatedMarket }, { status: 200 });
 	} catch (error) {
 		return NextResponse.json(
-			{ message: error.message || "Lỗi cập nhật banner" },
+			{ message: error.message || "Lỗi cập nhật chợ" },
 			{ status: 500 },
 		);
 	}

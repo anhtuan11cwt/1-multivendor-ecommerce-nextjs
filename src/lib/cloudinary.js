@@ -10,6 +10,7 @@ export const ALLOWED_UPLOAD_FOLDERS = [
 	"categories",
 	"coupons",
 	"banners",
+	"markets",
 	"products",
 ];
 

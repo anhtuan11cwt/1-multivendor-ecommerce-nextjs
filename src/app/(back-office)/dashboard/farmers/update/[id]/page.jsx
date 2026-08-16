@@ -6,38 +6,43 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 
 import FormHeader from "@/components/back-office/form-inputs/form-header";
-import ImageInput from "@/components/back-office/form-inputs/image-input";
-import SelectInput from "@/components/back-office/form-inputs/select-input";
 import SubmitButton from "@/components/back-office/form-inputs/submit-button";
 import TextAreaInput from "@/components/back-office/form-inputs/text-area-input";
 import TextInput from "@/components/back-office/form-inputs/text-input";
 import { makePutRequest } from "@/lib/api-request";
-import { generateSlug } from "@/lib/generate-slug";
-import { categorySchema } from "@/lib/schemas";
-import { uploadImageToCloudinary } from "@/lib/upload-image";
-
-const marketOptions = [
-	{ id: "1", title: "Chợ Sprouts Farmers" },
-	{ id: "2", title: "Chợ Long An" },
-];
+import { farmerSchema } from "@/lib/schemas";
+import { restrictDigits } from "@/lib/utils";
 
 const mockData = {
 	1: {
-		description: "Các loại rau củ được trồng theo phương pháp hữu cơ",
-		title: "Rau củ hữu cơ",
-	},
-	2: {
-		description: "Trái cây tươi từ các vùng miền nhiệt đới",
-		title: "Trái cây nhiệt đới",
+		code: "LFF-NVA-250801100000",
+		contactPerson: "Minh",
+		contactPersonPhone: "0987654321",
+		email: "an@example.com",
+		name: "Nguyễn Văn An",
+		notes: "",
+		paymentTerms: "Thanh toán sau 30 ngày",
+		phone: "0901234567",
+		physicalAddress: "Long An",
 	},
 };
 
-export default function UpdateCategoryPage() {
+export default function UpdateFarmerPage() {
 	const params = useParams();
 	const router = useRouter();
 	const id = params?.id;
 
-	const category = mockData[id] || { description: "", title: "" };
+	const farmer = mockData[id] || {
+		code: "",
+		contactPerson: "",
+		contactPersonPhone: "",
+		email: "",
+		name: "",
+		notes: "",
+		paymentTerms: "",
+		phone: "",
+		physicalAddress: "",
+	};
 
 	const {
 		register,
@@ -45,33 +50,32 @@ export default function UpdateCategoryPage() {
 		formState: { errors },
 	} = useForm({
 		defaultValues: {
-			description: category.description,
-			title: category.title,
+			contactPerson: farmer.contactPerson,
+			contactPersonPhone: farmer.contactPersonPhone,
+			email: farmer.email,
+			name: farmer.name,
+			notes: farmer.notes,
+			paymentTerms: farmer.paymentTerms,
+			phone: farmer.phone,
+			physicalAddress: farmer.physicalAddress,
 		},
-		resolver: zodResolver(categorySchema),
+		resolver: zodResolver(farmerSchema),
 	});
-	const [file, setFile] = useState(null);
 	const [loading, setLoading] = useState(false);
 
 	async function onSubmit(data) {
 		setLoading(true);
 		try {
 			await new Promise((r) => setTimeout(r, 2000));
-			let imageUrl = "";
-			if (file) {
-				imageUrl = await uploadImageToCloudinary(file, "categories");
-				if (!imageUrl) return;
-			}
-			const slug = generateSlug(data.title);
-			const payload = { id, ...data, imageUrl, slug };
+			const payload = { id, ...data, code: farmer.code };
 			const result = await makePutRequest({
 				data: payload,
-				endpoint: "api/categories",
-				resourceName: "Danh mục",
+				endpoint: "api/farmers",
+				resourceName: "Nông dân",
 				setLoading,
 			});
 			if (result) {
-				router.push("/dashboard/categories");
+				router.push("/dashboard/farmers");
 			}
 		} finally {
 			setLoading(false);
@@ -82,7 +86,7 @@ export default function UpdateCategoryPage() {
 		<div className="mx-auto max-w-3xl">
 			<FormHeader
 				isLoading={loading}
-				title={`Chỉnh sửa danh mục - ${category.title}`}
+				title={`Chỉnh sửa nông dân - ${farmer.name}`}
 			/>
 
 			<form
@@ -95,31 +99,72 @@ export default function UpdateCategoryPage() {
 						disabled={loading}
 						errors={errors}
 						isRequired
-						label="Tên danh mục"
-						name="title"
+						label="Tên nông dân"
+						name="name"
 						register={register}
 					/>
-					<ImageInput
-						disabled={loading}
-						file={file}
-						label="Hình ảnh danh mục"
-						setFile={setFile}
-					/>
-					<SelectInput
+					<TextInput
 						disabled={loading}
 						errors={errors}
-						label="Chọn chợ"
-						name="market"
-						options={marketOptions}
-						placeholder="Chọn chợ..."
+						inputMode="numeric"
+						isRequired
+						label="Số điện thoại"
+						maxLength={10}
+						name="phone"
+						onBeforeInput={restrictDigits}
+						register={register}
+						type="tel"
+					/>
+					<TextInput
+						disabled={loading}
+						errors={errors}
+						isRequired
+						label="Email"
+						name="email"
+						register={register}
+						type="email"
+					/>
+					<TextInput
+						className="col-span-2"
+						disabled={loading}
+						errors={errors}
+						label="Địa chỉ"
+						name="physicalAddress"
+						register={register}
+					/>
+					<TextInput
+						disabled={loading}
+						errors={errors}
+						label="Người liên hệ"
+						name="contactPerson"
+						register={register}
+					/>
+					<TextInput
+						disabled={loading}
+						errors={errors}
+						inputMode="numeric"
+						label="Số điện thoại người liên hệ"
+						maxLength={10}
+						name="contactPersonPhone"
+						onBeforeInput={restrictDigits}
+						register={register}
+						type="tel"
+					/>
+					<TextAreaInput
+						className="col-span-2"
+						disabled={loading}
+						errors={errors}
+						label="Điều khoản thanh toán"
+						name="paymentTerms"
 						register={register}
 					/>
 					<TextAreaInput
 						className="col-span-2"
 						disabled={loading}
 						errors={errors}
-						label="Mô tả"
-						name="description"
+						isRequired={false}
+						label="Ghi chú"
+						name="notes"
 						register={register}
 					/>
 				</div>

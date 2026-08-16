@@ -7,37 +7,28 @@ import { useForm } from "react-hook-form";
 
 import FormHeader from "@/components/back-office/form-inputs/form-header";
 import ImageInput from "@/components/back-office/form-inputs/image-input";
-import SelectInput from "@/components/back-office/form-inputs/select-input";
 import SubmitButton from "@/components/back-office/form-inputs/submit-button";
 import TextAreaInput from "@/components/back-office/form-inputs/text-area-input";
 import TextInput from "@/components/back-office/form-inputs/text-input";
 import { makePutRequest } from "@/lib/api-request";
 import { generateSlug } from "@/lib/generate-slug";
-import { categorySchema } from "@/lib/schemas";
+import { marketFormSchema } from "@/lib/schemas";
 import { uploadImageToCloudinary } from "@/lib/upload-image";
-
-const marketOptions = [
-	{ id: "1", title: "Chợ Sprouts Farmers" },
-	{ id: "2", title: "Chợ Long An" },
-];
 
 const mockData = {
 	1: {
-		description: "Các loại rau củ được trồng theo phương pháp hữu cơ",
-		title: "Rau củ hữu cơ",
-	},
-	2: {
-		description: "Trái cây tươi từ các vùng miền nhiệt đới",
-		title: "Trái cây nhiệt đới",
+		description: "Chợ đầu mối rau củ tại Long An",
+		slug: "sprouts-farmers-market",
+		title: "Chợ Sprouts Farmers",
 	},
 };
 
-export default function UpdateCategoryPage() {
+export default function UpdateMarketPage() {
 	const params = useParams();
 	const router = useRouter();
 	const id = params?.id;
 
-	const category = mockData[id] || { description: "", title: "" };
+	const market = mockData[id] || { description: "", slug: "", title: "" };
 
 	const {
 		register,
@@ -45,10 +36,10 @@ export default function UpdateCategoryPage() {
 		formState: { errors },
 	} = useForm({
 		defaultValues: {
-			description: category.description,
-			title: category.title,
+			description: market.description,
+			title: market.title,
 		},
-		resolver: zodResolver(categorySchema),
+		resolver: zodResolver(marketFormSchema),
 	});
 	const [file, setFile] = useState(null);
 	const [loading, setLoading] = useState(false);
@@ -57,21 +48,21 @@ export default function UpdateCategoryPage() {
 		setLoading(true);
 		try {
 			await new Promise((r) => setTimeout(r, 2000));
-			let imageUrl = "";
+			let logo = "";
 			if (file) {
-				imageUrl = await uploadImageToCloudinary(file, "categories");
-				if (!imageUrl) return;
+				logo = await uploadImageToCloudinary(file, "markets");
+				if (!logo) return;
 			}
 			const slug = generateSlug(data.title);
-			const payload = { id, ...data, imageUrl, slug };
+			const payload = { id, ...data, logo, slug };
 			const result = await makePutRequest({
 				data: payload,
-				endpoint: "api/categories",
-				resourceName: "Danh mục",
+				endpoint: "api/markets",
+				resourceName: "Chợ",
 				setLoading,
 			});
 			if (result) {
-				router.push("/dashboard/categories");
+				router.push("/dashboard/markets");
 			}
 		} finally {
 			setLoading(false);
@@ -82,7 +73,7 @@ export default function UpdateCategoryPage() {
 		<div className="mx-auto max-w-3xl">
 			<FormHeader
 				isLoading={loading}
-				title={`Chỉnh sửa danh mục - ${category.title}`}
+				title={`Chỉnh sửa chợ - ${market.title}`}
 			/>
 
 			<form
@@ -95,24 +86,16 @@ export default function UpdateCategoryPage() {
 						disabled={loading}
 						errors={errors}
 						isRequired
-						label="Tên danh mục"
+						label="Tên chợ"
 						name="title"
 						register={register}
 					/>
 					<ImageInput
+						className="col-span-2"
 						disabled={loading}
 						file={file}
-						label="Hình ảnh danh mục"
+						label="Logo chợ"
 						setFile={setFile}
-					/>
-					<SelectInput
-						disabled={loading}
-						errors={errors}
-						label="Chọn chợ"
-						name="market"
-						options={marketOptions}
-						placeholder="Chọn chợ..."
-						register={register}
 					/>
 					<TextAreaInput
 						className="col-span-2"
