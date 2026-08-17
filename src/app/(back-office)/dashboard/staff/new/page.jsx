@@ -2,55 +2,38 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
-import { useForm, useWatch } from "react-hook-form";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
 
 import FormHeader from "@/components/back-office/form-inputs/form-header";
 import SubmitButton from "@/components/back-office/form-inputs/submit-button";
 import TextInput from "@/components/back-office/form-inputs/text-input";
-import ToggleInput from "@/components/back-office/form-inputs/toggle-input";
 import { makePostRequest } from "@/lib/api-request";
-import { generateCouponCode } from "@/lib/generate-coupon-code";
-import { couponSchema, getTodayString } from "@/lib/schemas";
+import { staffSchema } from "@/lib/schemas";
 
-export default function NewCouponPage() {
+export default function NewStaffPage() {
 	const router = useRouter();
 	const {
 		register,
-		setValue,
-		control,
 		handleSubmit,
 		formState: { errors },
 	} = useForm({
-		defaultValues: { isActive: true },
-		resolver: zodResolver(couponSchema),
+		resolver: zodResolver(staffSchema),
 	});
 	const [loading, setLoading] = useState(false);
-
-	const watchedTitle = useWatch({ control, name: "title" });
-	const watchedExpiryDate = useWatch({ control, name: "expiryDate" });
-	const generatedCode = generateCouponCode(watchedTitle, watchedExpiryDate);
-
-	useEffect(() => {
-		setValue("couponCode", generatedCode);
-	}, [generatedCode, setValue]);
 
 	async function onSubmit(data) {
 		setLoading(true);
 		try {
 			await new Promise((r) => setTimeout(r, 2000));
-			const payload = {
-				...data,
-				couponCode: generateCouponCode(data.title, data.expiryDate),
-			};
 			const result = await makePostRequest({
-				data: payload,
-				endpoint: "api/coupons",
-				resourceName: "Mã giảm giá",
+				data,
+				endpoint: "api/staff",
+				resourceName: "Nhân viên",
 				setLoading,
 			});
 			if (result) {
-				router.push("/dashboard/coupons");
+				router.push("/dashboard/staff");
 			}
 		} finally {
 			setLoading(false);
@@ -59,7 +42,7 @@ export default function NewCouponPage() {
 
 	return (
 		<div className="mx-auto max-w-3xl">
-			<FormHeader isLoading={loading} title="Tạo mã giảm giá mới" />
+			<FormHeader isLoading={loading} title="Tạo nhân viên mới" />
 
 			<form
 				className="rounded-lg bg-white p-6 shadow dark:bg-slate-800"
@@ -71,40 +54,41 @@ export default function NewCouponPage() {
 						disabled={loading}
 						errors={errors}
 						isRequired
-						label="Tiêu đề chiến dịch"
-						name="title"
-						register={register}
-					/>
-					<TextInput
-						disabled
-						errors={errors}
-						label="Mã giảm giá"
-						name="couponCode"
+						label="Họ và tên"
+						name="fullName"
 						register={register}
 					/>
 					<TextInput
 						disabled={loading}
 						errors={errors}
 						isRequired
-						label="Ngày hết hạn"
-						min={getTodayString()}
-						name="expiryDate"
+						label="Mật khẩu"
+						name="password"
 						register={register}
-						type="date"
+						type="password"
 					/>
-					<ToggleInput
-						className="col-span-2"
-						control={control}
+					<TextInput
 						disabled={loading}
-						label="Xuất bản mã giảm giá"
-						name="isActive"
+						errors={errors}
+						isRequired
+						label="Email"
+						name="email"
+						register={register}
+						type="email"
+					/>
+					<TextInput
+						className="col-span-2"
+						disabled={loading}
+						errors={errors}
+						label="Số điện thoại"
+						name="phone"
 						register={register}
 					/>
 				</div>
 
 				<div className="mt-6 flex justify-end">
 					<SubmitButton
-						buttonTitle="Tạo mã giảm giá"
+						buttonTitle="Tạo nhân viên"
 						isLoading={loading}
 						loadingButtonTitle="Đang tạo..."
 					/>

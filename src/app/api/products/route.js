@@ -27,6 +27,7 @@ export async function POST(request) {
 			categoryId,
 			farmerId,
 			tags,
+			isActive,
 		} = parsed.data;
 		const productData = {
 			barcode: barcode || "",
@@ -36,6 +37,7 @@ export async function POST(request) {
 			farmerId,
 			id: crypto.randomUUID(),
 			imageUrl: imageUrl || "",
+			isActive,
 			price,
 			salePrice: salePrice ?? null,
 			sku: sku || "",
@@ -82,6 +84,7 @@ export async function PUT(request) {
 			categoryId,
 			farmerId,
 			tags,
+			isActive,
 		} = parsed.data;
 		const productData = {
 			barcode: barcode || "",
@@ -90,6 +93,7 @@ export async function PUT(request) {
 			farmerId,
 			id,
 			imageUrl: imageUrl || "",
+			isActive,
 			price,
 			salePrice: salePrice ?? null,
 			sku: sku || "",

@@ -15,11 +15,12 @@ export async function POST(request) {
 				{ status: 400 },
 			);
 		}
-		const { title, slug, logo, description } = parsed.data;
+		const { title, slug, logo, description, isActive } = parsed.data;
 		const newMarket = {
 			createdAt: new Date().toLocaleDateString("vi-VN"),
 			description: description || "",
 			id: crypto.randomUUID(),
+			isActive,
 			logo: logo || "",
 			slug,
 			title,
@@ -51,10 +52,11 @@ export async function PUT(request) {
 				{ status: 400 },
 			);
 		}
-		const { title, slug, logo, description } = parsed.data;
+		const { title, slug, logo, description, isActive } = parsed.data;
 		const updatedMarket = {
 			description: description || "",
 			id,
+			isActive,
 			logo: logo || "",
 			slug,
 			title,

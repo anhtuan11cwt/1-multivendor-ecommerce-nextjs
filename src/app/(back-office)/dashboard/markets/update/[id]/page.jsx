@@ -10,6 +10,7 @@ import ImageInput from "@/components/back-office/form-inputs/image-input";
 import SubmitButton from "@/components/back-office/form-inputs/submit-button";
 import TextAreaInput from "@/components/back-office/form-inputs/text-area-input";
 import TextInput from "@/components/back-office/form-inputs/text-input";
+import ToggleInput from "@/components/back-office/form-inputs/toggle-input";
 import { makePutRequest } from "@/lib/api-request";
 import { generateSlug } from "@/lib/generate-slug";
 import { marketFormSchema } from "@/lib/schemas";
@@ -18,8 +19,9 @@ import { uploadImageToCloudinary } from "@/lib/upload-image";
 const mockData = {
 	1: {
 		description: "Chợ đầu mối rau củ tại Long An",
+		isActive: true,
 		slug: "sprouts-farmers-market",
-		title: "Chợ Sprouts Farmers",
+		title: "Sprouts Farmers Market",
 	},
 };
 
@@ -28,15 +30,22 @@ export default function UpdateMarketPage() {
 	const router = useRouter();
 	const id = params?.id;
 
-	const market = mockData[id] || { description: "", slug: "", title: "" };
+	const market = mockData[id] || {
+		description: "",
+		isActive: true,
+		slug: "",
+		title: "",
+	};
 
 	const {
 		register,
+		control,
 		handleSubmit,
 		formState: { errors },
 	} = useForm({
 		defaultValues: {
 			description: market.description,
+			isActive: market.isActive,
 			title: market.title,
 		},
 		resolver: zodResolver(marketFormSchema),
@@ -103,6 +112,14 @@ export default function UpdateMarketPage() {
 						errors={errors}
 						label="Mô tả"
 						name="description"
+						register={register}
+					/>
+					<ToggleInput
+						className="col-span-2"
+						control={control}
+						disabled={loading}
+						label="Trạng thái chợ"
+						name="isActive"
 						register={register}
 					/>
 				</div>

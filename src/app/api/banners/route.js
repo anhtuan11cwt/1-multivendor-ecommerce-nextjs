@@ -15,11 +15,12 @@ export async function POST(request) {
 				{ status: 400 },
 			);
 		}
-		const { title, link, imageUrl } = parsed.data;
+		const { title, link, imageUrl, isActive } = parsed.data;
 		const newBanner = {
 			createdAt: new Date().toLocaleDateString("vi-VN"),
 			id: crypto.randomUUID(),
 			imageUrl,
+			isActive,
 			link: link || "",
 			title,
 		};
@@ -50,10 +51,11 @@ export async function PUT(request) {
 				{ status: 400 },
 			);
 		}
-		const { title, link, imageUrl } = parsed.data;
+		const { title, link, imageUrl, isActive } = parsed.data;
 		const updatedBanner = {
 			id,
 			imageUrl,
+			isActive,
 			link: link || "",
 			title,
 		};

@@ -10,16 +10,19 @@ import FormHeader from "@/components/back-office/form-inputs/form-header";
 import ImageInput from "@/components/back-office/form-inputs/image-input";
 import SubmitButton from "@/components/back-office/form-inputs/submit-button";
 import TextInput from "@/components/back-office/form-inputs/text-input";
+import ToggleInput from "@/components/back-office/form-inputs/toggle-input";
 import { makePutRequest } from "@/lib/api-request";
 import { bannerFormSchema } from "@/lib/schemas";
 import { uploadImageToCloudinary } from "@/lib/upload-image";
 
 const mockData = {
 	1: {
+		isActive: true,
 		link: "/dashboard/categories/rau-cu-huu-co",
 		title: "Khuyến mãi rau hữu cơ",
 	},
 	2: {
+		isActive: true,
 		link: "/dashboard/products/1",
 		title: "Trái cây nhập khẩu",
 	},
@@ -30,14 +33,16 @@ export default function UpdateBannerPage() {
 	const router = useRouter();
 	const id = params?.id;
 
-	const banner = mockData[id] || { link: "", title: "" };
+	const banner = mockData[id] || { isActive: true, link: "", title: "" };
 
 	const {
 		register,
+		control,
 		handleSubmit,
 		formState: { errors },
 	} = useForm({
 		defaultValues: {
+			isActive: banner.isActive,
 			link: banner.link,
 			title: banner.title,
 		},
@@ -107,6 +112,14 @@ export default function UpdateBannerPage() {
 						file={file}
 						label="Hình ảnh banner"
 						setFile={setFile}
+					/>
+					<ToggleInput
+						className="col-span-2"
+						control={control}
+						disabled={loading}
+						label="Xuất bản banner"
+						name="isActive"
+						register={register}
 					/>
 				</div>
 

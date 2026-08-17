@@ -15,7 +15,8 @@ export async function POST(request) {
 				{ status: 400 },
 			);
 		}
-		const { title, slug, imageUrl, description, marketIds } = parsed.data;
+		const { title, slug, imageUrl, description, marketIds, isActive } =
+			parsed.data;
 		if (!slug) {
 			return NextResponse.json(
 				{ message: "Slug là bắt buộc" },
@@ -27,6 +28,7 @@ export async function POST(request) {
 			description: description || "",
 			id: crypto.randomUUID(),
 			imageUrl: imageUrl || "",
+			isActive,
 			marketIds: marketIds || [],
 			slug,
 			title,
@@ -58,11 +60,13 @@ export async function PUT(request) {
 				{ status: 400 },
 			);
 		}
-		const { title, slug, imageUrl, description, marketIds } = parsed.data;
+		const { title, slug, imageUrl, description, marketIds, isActive } =
+			parsed.data;
 		const updatedCategory = {
 			description: description || "",
 			id,
 			imageUrl: imageUrl || "",
+			isActive,
 			marketIds: marketIds || [],
 			slug,
 			title,

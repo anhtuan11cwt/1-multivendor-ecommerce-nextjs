@@ -12,6 +12,7 @@ import SelectInput from "@/components/back-office/form-inputs/select-input";
 import SubmitButton from "@/components/back-office/form-inputs/submit-button";
 import TextAreaInput from "@/components/back-office/form-inputs/text-area-input";
 import TextInput from "@/components/back-office/form-inputs/text-input";
+import ToggleInput from "@/components/back-office/form-inputs/toggle-input";
 import { makePutRequest } from "@/lib/api-request";
 import { generateSlug } from "@/lib/generate-slug";
 import { productFormSchema } from "@/lib/schemas";
@@ -33,6 +34,7 @@ const mockData = {
 		categoryId: "1",
 		description: "Rau củ tươi trồng theo phương pháp hữu cơ",
 		farmerId: "1",
+		isActive: true,
 		price: 45000,
 		salePrice: 40000,
 		sku: "SKU-001",
@@ -51,6 +53,7 @@ export default function UpdateProductPage() {
 		categoryId: "",
 		description: "",
 		farmerId: "",
+		isActive: true,
 		price: "",
 		salePrice: "",
 		sku: "",
@@ -60,6 +63,7 @@ export default function UpdateProductPage() {
 
 	const {
 		register,
+		control,
 		handleSubmit,
 		formState: { errors },
 	} = useForm({
@@ -68,6 +72,7 @@ export default function UpdateProductPage() {
 			categoryId: product.categoryId,
 			description: product.description,
 			farmerId: product.farmerId,
+			isActive: product.isActive,
 			price: product.price,
 			salePrice: product.salePrice,
 			sku: product.sku,
@@ -200,6 +205,14 @@ export default function UpdateProductPage() {
 						file={file}
 						label="Ảnh sản phẩm"
 						setFile={setFile}
+					/>
+					<ToggleInput
+						className="col-span-2"
+						control={control}
+						disabled={loading}
+						label="Xuất bản sản phẩm"
+						name="isActive"
+						register={register}
 					/>
 				</div>
 

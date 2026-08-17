@@ -12,6 +12,7 @@ import SelectInput from "@/components/back-office/form-inputs/select-input";
 import SubmitButton from "@/components/back-office/form-inputs/submit-button";
 import TextAreaInput from "@/components/back-office/form-inputs/text-area-input";
 import TextInput from "@/components/back-office/form-inputs/text-input";
+import ToggleInput from "@/components/back-office/form-inputs/toggle-input";
 import { makePostRequest } from "@/lib/api-request";
 import { generateSlug } from "@/lib/generate-slug";
 import { productFormSchema } from "@/lib/schemas";
@@ -31,9 +32,11 @@ export default function NewProductPage() {
 	const router = useRouter();
 	const {
 		register,
+		control,
 		handleSubmit,
 		formState: { errors },
 	} = useForm({
+		defaultValues: { isActive: true },
 		resolver: zodResolver(productFormSchema),
 	});
 	const [file, setFile] = useState(null);
@@ -158,6 +161,14 @@ export default function NewProductPage() {
 						file={file}
 						label="Ảnh sản phẩm"
 						setFile={setFile}
+					/>
+					<ToggleInput
+						className="col-span-2"
+						control={control}
+						disabled={loading}
+						label="Xuất bản sản phẩm"
+						name="isActive"
+						register={register}
 					/>
 				</div>
 

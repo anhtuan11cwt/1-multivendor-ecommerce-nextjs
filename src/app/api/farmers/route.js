@@ -25,6 +25,7 @@ export async function POST(request) {
 			contactPersonPhone,
 			paymentTerms,
 			notes,
+			isActive,
 		} = parsed.data;
 		const code = generateUserCode("LFF", name);
 		const newFarmer = {
@@ -34,6 +35,7 @@ export async function POST(request) {
 			createdAt: new Date().toLocaleDateString("vi-VN"),
 			email,
 			id: crypto.randomUUID(),
+			isActive,
 			name,
 			notes: notes || "",
 			paymentTerms: paymentTerms || "",
@@ -76,6 +78,7 @@ export async function PUT(request) {
 			contactPersonPhone,
 			paymentTerms,
 			notes,
+			isActive,
 		} = parsed.data;
 		const code = body.code || generateUserCode("LFF", name);
 		const updatedFarmer = {
@@ -84,6 +87,7 @@ export async function PUT(request) {
 			contactPersonPhone: contactPersonPhone || "",
 			email,
 			id,
+			isActive,
 			name,
 			notes: notes || "",
 			paymentTerms: paymentTerms || "",

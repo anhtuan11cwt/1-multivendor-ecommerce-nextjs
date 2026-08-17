@@ -11,6 +11,7 @@ import SelectInput from "@/components/back-office/form-inputs/select-input";
 import SubmitButton from "@/components/back-office/form-inputs/submit-button";
 import TextAreaInput from "@/components/back-office/form-inputs/text-area-input";
 import TextInput from "@/components/back-office/form-inputs/text-input";
+import ToggleInput from "@/components/back-office/form-inputs/toggle-input";
 import { makePutRequest } from "@/lib/api-request";
 import { generateSlug } from "@/lib/generate-slug";
 import { categorySchema } from "@/lib/schemas";
@@ -24,10 +25,12 @@ const marketOptions = [
 const mockData = {
 	1: {
 		description: "Các loại rau củ được trồng theo phương pháp hữu cơ",
+		isActive: true,
 		title: "Rau củ hữu cơ",
 	},
 	2: {
 		description: "Trái cây tươi từ các vùng miền nhiệt đới",
+		isActive: true,
 		title: "Trái cây nhiệt đới",
 	},
 };
@@ -37,15 +40,21 @@ export default function UpdateCategoryPage() {
 	const router = useRouter();
 	const id = params?.id;
 
-	const category = mockData[id] || { description: "", title: "" };
+	const category = mockData[id] || {
+		description: "",
+		isActive: true,
+		title: "",
+	};
 
 	const {
 		register,
+		control,
 		handleSubmit,
 		formState: { errors },
 	} = useForm({
 		defaultValues: {
 			description: category.description,
+			isActive: category.isActive,
 			title: category.title,
 		},
 		resolver: zodResolver(categorySchema),
@@ -120,6 +129,14 @@ export default function UpdateCategoryPage() {
 						errors={errors}
 						label="Mô tả"
 						name="description"
+						register={register}
+					/>
+					<ToggleInput
+						className="col-span-2"
+						control={control}
+						disabled={loading}
+						label="Xuất bản danh mục"
+						name="isActive"
 						register={register}
 					/>
 				</div>

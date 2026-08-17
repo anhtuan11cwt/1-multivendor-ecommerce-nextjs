@@ -1,11 +1,11 @@
 import { NextResponse } from "next/server";
 
-import { couponSchema } from "@/lib/schemas";
+import { staffSchema } from "@/lib/schemas";
 
 export async function POST(request) {
 	try {
 		const body = await request.json();
-		const parsed = couponSchema.safeParse(body);
+		const parsed = staffSchema.safeParse(body);
 		if (!parsed.success) {
 			return NextResponse.json(
 				{
@@ -15,20 +15,20 @@ export async function POST(request) {
 				{ status: 400 },
 			);
 		}
-		const { title, couponCode, expiryDate, isActive } = parsed.data;
-		const newCoupon = {
-			couponCode,
+		const { fullName, password, email, phone } = parsed.data;
+		const newStaff = {
 			createdAt: new Date().toLocaleDateString("vi-VN"),
-			expiryDate,
+			email,
+			fullName,
 			id: crypto.randomUUID(),
-			isActive,
-			title,
+			password,
+			phone: phone || "",
 		};
-		console.log("Đã tạo mã giảm giá:", newCoupon);
-		return NextResponse.json({ data: newCoupon }, { status: 201 });
+		console.log("Đã tạo nhân viên:", newStaff);
+		return NextResponse.json({ data: newStaff }, { status: 201 });
 	} catch (error) {
 		return NextResponse.json(
-			{ message: error.message || "Lỗi tạo mã giảm giá" },
+			{ message: error.message || "Lỗi tạo nhân viên" },
 			{ status: 500 },
 		);
 	}

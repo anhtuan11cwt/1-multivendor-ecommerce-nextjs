@@ -58,6 +58,7 @@ export const categorySchema = z.object({
 			message: "Mô tả tối đa 500 ký tự",
 		}),
 	imageUrl: z.string().optional(),
+	isActive: z.boolean().default(true),
 	marketIds: z.array(z.string()).optional(),
 	slug: z.string().optional(),
 	title: z
@@ -77,6 +78,7 @@ export const couponSchema = z.object({
 		.refine((value) => value > getTodayString(), {
 			message: "Ngày hết hạn phải lớn hơn ngày hiện tại",
 		}),
+	isActive: z.boolean().default(true),
 	title: z
 		.string()
 		.min(1, "Tiêu đề chiến dịch là bắt buộc")
@@ -84,6 +86,7 @@ export const couponSchema = z.object({
 });
 
 const bannerFields = {
+	isActive: z.boolean().default(true),
 	link: z
 		.string()
 		.optional()
@@ -107,6 +110,7 @@ export const farmerSchema = z.object({
 	contactPerson: optionalVietnameseNameSchema,
 	contactPersonPhone: optionalVietnamPhoneSchema,
 	email: z.string().email("Email không hợp lệ").min(1, "Email là bắt buộc"),
+	isActive: z.boolean().default(false),
 	name: vietnameseNameSchema,
 	notes: z.string().optional(),
 	paymentTerms: z.string().optional(),
@@ -121,6 +125,7 @@ export const marketSchema = z.object({
 		.refine((value) => !value || value.length <= 500, {
 			message: "Mô tả tối đa 500 ký tự",
 		}),
+	isActive: z.boolean().default(true),
 	logo: z.string().optional(),
 	slug: z.string().min(1, "Slug là bắt buộc"),
 	title: z
@@ -148,6 +153,7 @@ export const productSchema = z.object({
 		}),
 	farmerId: z.string().min(1, "Vui lòng chọn nông dân"),
 	imageUrl: z.string().optional(),
+	isActive: z.boolean().default(true),
 	price: z.preprocess(
 		(value) => {
 			if (value === "" || value === null || value === undefined) return 0;
@@ -183,4 +189,11 @@ export const productSchema = z.object({
 export const productFormSchema = productSchema.omit({
 	imageUrl: true,
 	slug: true,
+});
+
+export const staffSchema = z.object({
+	email: z.string().email("Email không hợp lệ").min(1, "Email là bắt buộc"),
+	fullName: vietnameseNameSchema,
+	password: z.string().min(6, "Mật khẩu tối thiểu 6 ký tự"),
+	phone: z.string().optional(),
 });
