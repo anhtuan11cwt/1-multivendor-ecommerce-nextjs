@@ -2,26 +2,26 @@
 import Link from "next/link";
 import PageHeader from "@/components/back-office/page-header";
 
-const mockBanners = [
-	{
-		createdAt: "12/08/2025",
-		id: "1",
-		link: "/dashboard/categories/rau-cu-huu-co",
-		title: "Khuyến mãi rau hữu cơ",
-	},
-	{
-		createdAt: "10/08/2025",
-		id: "2",
-		link: "/dashboard/products/1",
-		title: "Trái cây nhập khẩu",
-	},
-];
+const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "";
 
-export default function BannersPage() {
+async function getBanners() {
+	try {
+		const res = await fetch(`${BASE_URL}/api/banners`, { cache: "no-store" });
+		if (!res.ok) return [];
+		const json = await res.json();
+		return json.data || [];
+	} catch {
+		return [];
+	}
+}
+
+export default async function BannersPage() {
+	const banners = await getBanners();
+
 	return (
 		<div>
 			<PageHeader
-				heading="Banner cửa hàng"
+				heading="Store Banners"
 				href="/dashboard/banners/new"
 				linkTitle="Thêm banner"
 			/>
@@ -33,12 +33,13 @@ export default function BannersPage() {
 							<th className="px-4 py-3 font-medium">STT</th>
 							<th className="px-4 py-3 font-medium">Tiêu đề</th>
 							<th className="px-4 py-3 font-medium">Link</th>
+							<th className="px-4 py-3 font-medium">Trạng thái</th>
 							<th className="px-4 py-3 font-medium">Ngày tạo</th>
 							<th className="px-4 py-3 font-medium">Hành động</th>
 						</tr>
 					</thead>
 					<tbody>
-						{mockBanners.map((banner, i) => (
+						{banners.map((banner, i) => (
 							<tr
 								className="border-slate-100 border-b last:border-0 dark:border-slate-700/50"
 								key={banner.id}
@@ -52,8 +53,19 @@ export default function BannersPage() {
 								<td className="max-w-[200px] truncate px-4 py-3 text-slate-500 dark:text-slate-400">
 									{banner.link}
 								</td>
+								<td className="px-4 py-3">
+									<span
+										className={`rounded-full px-2 py-0.5 font-medium text-xs ${
+											banner.isActive
+												? "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-400"
+												: "bg-slate-100 text-slate-600 dark:bg-slate-700 dark:text-slate-300"
+										}`}
+									>
+										{banner.isActive ? "Hoạt động" : "Bản nháp"}
+									</span>
+								</td>
 								<td className="px-4 py-3 text-slate-500 dark:text-slate-400">
-									{banner.createdAt}
+									{new Date(banner.createdAt).toLocaleDateString("vi-VN")}
 								</td>
 								<td className="px-4 py-3">
 									<div className="flex items-center gap-2">
@@ -73,6 +85,16 @@ export default function BannersPage() {
 								</td>
 							</tr>
 						))}
+						{banners.length === 0 && (
+							<tr>
+								<td
+									className="px-4 py-10 text-center text-slate-500 dark:text-slate-400"
+									colSpan={6}
+								>
+									Chưa có banner nào.
+								</td>
+							</tr>
+						)}
 					</tbody>
 				</table>
 			</div>

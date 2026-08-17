@@ -80,7 +80,6 @@ export const categorySchema = z.object({
 		}),
 	imageUrl: z.string().optional(),
 	isActive: z.boolean().default(true),
-	marketIds: z.array(z.string()).optional(),
 	slug: z.string().optional(),
 	title: z
 		.string()
@@ -137,9 +136,11 @@ export const farmerSchema = z.object({
 	paymentTerms: z.string().optional(),
 	phone: vietnamPhoneSchema,
 	physicalAddress: z.string().optional(),
+	profileImageUrl: z.string().optional(),
 });
 
 export const marketSchema = z.object({
+	categoryIds: z.array(z.string()).optional(),
 	description: z
 		.string()
 		.optional()

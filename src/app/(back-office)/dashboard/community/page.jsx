@@ -2,16 +2,22 @@ import { Pencil, Trash2 } from "lucide-react";
 import Link from "next/link";
 import PageHeader from "@/components/back-office/page-header";
 
-const mockTrainings = [
-	{
-		category: "Rau củ hữu cơ",
-		createdAt: "16/08/2025",
-		id: "1",
-		title: "Kỹ thuật trồng rau thủy canh",
-	},
-];
+const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "";
 
-export default function CommunityPage() {
+async function getTrainings() {
+	try {
+		const res = await fetch(`${BASE_URL}/api/trainings`, { cache: "no-store" });
+		if (!res.ok) return [];
+		const json = await res.json();
+		return json.data || [];
+	} catch {
+		return [];
+	}
+}
+
+export default async function CommunityPage() {
+	const trainings = await getTrainings();
+
 	return (
 		<div>
 			<PageHeader
@@ -26,13 +32,13 @@ export default function CommunityPage() {
 						<tr className="border-slate-200 border-b text-slate-500 dark:border-slate-700 dark:text-slate-400">
 							<th className="px-4 py-3 font-medium">STT</th>
 							<th className="px-4 py-3 font-medium">Tiêu đề</th>
-							<th className="px-4 py-3 font-medium">Danh mục</th>
+							<th className="px-4 py-3 font-medium">Trạng thái</th>
 							<th className="px-4 py-3 font-medium">Ngày tạo</th>
 							<th className="px-4 py-3 font-medium">Hành động</th>
 						</tr>
 					</thead>
 					<tbody>
-						{mockTrainings.map((training, i) => (
+						{trainings.map((training, i) => (
 							<tr
 								className="border-slate-100 border-b last:border-0 dark:border-slate-700/50"
 								key={training.id}
@@ -43,11 +49,19 @@ export default function CommunityPage() {
 								<td className="px-4 py-3 font-medium text-slate-900 dark:text-slate-100">
 									{training.title}
 								</td>
-								<td className="px-4 py-3 text-slate-500 dark:text-slate-400">
-									{training.category}
+								<td className="px-4 py-3">
+									<span
+										className={`rounded-full px-2 py-0.5 font-medium text-xs ${
+											training.isActive
+												? "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-400"
+												: "bg-slate-100 text-slate-600 dark:bg-slate-700 dark:text-slate-300"
+										}`}
+									>
+										{training.isActive ? "Hoạt động" : "Bản nháp"}
+									</span>
 								</td>
 								<td className="px-4 py-3 text-slate-500 dark:text-slate-400">
-									{training.createdAt}
+									{new Date(training.createdAt).toLocaleDateString("vi-VN")}
 								</td>
 								<td className="px-4 py-3">
 									<div className="flex items-center gap-2">
@@ -67,6 +81,16 @@ export default function CommunityPage() {
 								</td>
 							</tr>
 						))}
+						{trainings.length === 0 && (
+							<tr>
+								<td
+									className="px-4 py-10 text-center text-slate-500 dark:text-slate-400"
+									colSpan={5}
+								>
+									Chưa có bài đào tạo nào.
+								</td>
+							</tr>
+						)}
 					</tbody>
 				</table>
 			</div>

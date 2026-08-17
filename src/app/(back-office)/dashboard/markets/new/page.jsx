@@ -7,6 +7,7 @@ import { useForm } from "react-hook-form";
 
 import FormHeader from "@/components/back-office/form-inputs/form-header";
 import ImageInput from "@/components/back-office/form-inputs/image-input";
+import SelectInput from "@/components/back-office/form-inputs/select-input";
 import SubmitButton from "@/components/back-office/form-inputs/submit-button";
 import TextAreaInput from "@/components/back-office/form-inputs/text-area-input";
 import TextInput from "@/components/back-office/form-inputs/text-input";
@@ -15,9 +16,11 @@ import { makePostRequest } from "@/lib/api-request";
 import { generateSlug } from "@/lib/generate-slug";
 import { marketFormSchema } from "@/lib/schemas";
 import { uploadImageToCloudinary } from "@/lib/upload-image";
+import { useOptions } from "@/lib/use-options";
 
 export default function NewMarketPage() {
 	const router = useRouter();
+	const categoryOptions = useOptions("api/categories");
 	const {
 		register,
 		control,
@@ -71,6 +74,16 @@ export default function NewMarketPage() {
 						isRequired
 						label="Tên chợ"
 						name="title"
+						register={register}
+					/>
+					<SelectInput
+						className="col-span-2"
+						disabled={loading}
+						errors={errors}
+						label="Chọn danh mục"
+						multiple
+						name="categoryIds"
+						options={categoryOptions}
 						register={register}
 					/>
 					<ImageInput

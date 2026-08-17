@@ -3,6 +3,20 @@ import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { bannerSchema } from "@/lib/schemas";
 
+export async function GET() {
+	try {
+		const banners = await db.banner.findMany({
+			orderBy: { createdAt: "desc" },
+		});
+		return NextResponse.json({ data: banners }, { status: 200 });
+	} catch (error) {
+		return NextResponse.json(
+			{ message: error.message || "Lỗi lấy danh sách banner" },
+			{ status: 500 },
+		);
+	}
+}
+
 export async function POST(request) {
 	try {
 		const body = await request.json();

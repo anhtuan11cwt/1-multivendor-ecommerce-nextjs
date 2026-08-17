@@ -2,17 +2,18 @@
 import Link from "next/link";
 import PageHeader from "@/components/back-office/page-header";
 
-const mockProducts = [
-	{
-		category: "Rau củ hữu cơ",
-		createdAt: "16/08/2025",
-		id: "1",
-		price: 45000,
-		sku: "SKU-001",
-		tags: ["Rau sạch", "Hữu cơ"],
-		title: "Bó rau muống hữu cơ",
-	},
-];
+const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "";
+
+async function getJson(endpoint) {
+	try {
+		const res = await fetch(`${BASE_URL}${endpoint}`, { cache: "no-store" });
+		if (!res.ok) return [];
+		const json = await res.json();
+		return json.data || [];
+	} catch {
+		return [];
+	}
+}
 
 function formatPrice(value) {
 	return new Intl.NumberFormat("vi-VN", {
@@ -21,7 +22,15 @@ function formatPrice(value) {
 	}).format(value);
 }
 
-export default function ProductsPage() {
+export default async function ProductsPage() {
+	const [products, categories] = await Promise.all([
+		getJson("/api/products"),
+		getJson("/api/categories"),
+	]);
+	const categoryMap = new Map(
+		categories.map((category) => [category.id, category.title]),
+	);
+
 	return (
 		<div>
 			<PageHeader
@@ -45,7 +54,7 @@ export default function ProductsPage() {
 						</tr>
 					</thead>
 					<tbody>
-						{mockProducts.map((product, i) => (
+						{products.map((product, i) => (
 							<tr
 								className="border-slate-100 border-b last:border-0 dark:border-slate-700/50"
 								key={product.id}
@@ -60,14 +69,14 @@ export default function ProductsPage() {
 									{product.sku}
 								</td>
 								<td className="px-4 py-3 text-slate-500 dark:text-slate-400">
-									{product.category}
+									{categoryMap.get(product.categoryId) || "-"}
 								</td>
 								<td className="px-4 py-3 text-slate-500 dark:text-slate-400">
 									{formatPrice(product.price)}
 								</td>
 								<td className="px-4 py-3">
 									<div className="flex flex-wrap gap-1">
-										{product.tags.map((tag) => (
+										{product.tags?.map((tag) => (
 											<span
 												className="rounded-full bg-slate-600 px-2 py-0.5 text-white text-xs dark:bg-slate-500"
 												key={tag}
@@ -78,7 +87,7 @@ export default function ProductsPage() {
 									</div>
 								</td>
 								<td className="px-4 py-3 text-slate-500 dark:text-slate-400">
-									{product.createdAt}
+									{new Date(product.createdAt).toLocaleDateString("vi-VN")}
 								</td>
 								<td className="px-4 py-3">
 									<div className="flex items-center gap-2">
@@ -98,6 +107,16 @@ export default function ProductsPage() {
 								</td>
 							</tr>
 						))}
+						{products.length === 0 && (
+							<tr>
+								<td
+									className="px-4 py-10 text-center text-slate-500 dark:text-slate-400"
+									colSpan={8}
+								>
+									Chưa có sản phẩm nào.
+								</td>
+							</tr>
+						)}
 					</tbody>
 				</table>
 			</div>

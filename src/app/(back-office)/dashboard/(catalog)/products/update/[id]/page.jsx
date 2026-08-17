@@ -17,16 +17,7 @@ import { makePutRequest } from "@/lib/api-request";
 import { generateSlug } from "@/lib/generate-slug";
 import { productFormSchema } from "@/lib/schemas";
 import { uploadImageToCloudinary } from "@/lib/upload-image";
-
-const categoryOptions = [
-	{ id: "1", title: "Rau củ hữu cơ" },
-	{ id: "2", title: "Trái cây nhiệt đới" },
-];
-
-const farmerOptions = [
-	{ id: "1", title: "Nguyễn Văn An" },
-	{ id: "2", title: "Trần Thị Mai" },
-];
+import { useOptions } from "@/lib/use-options";
 
 const mockData = {
 	1: {
@@ -61,6 +52,9 @@ export default function UpdateProductPage() {
 		title: "",
 	};
 
+	const categoryOptions = useOptions("api/categories");
+	const farmerOptions = useOptions("api/farmers");
+
 	const {
 		register,
 		control,
@@ -69,9 +63,9 @@ export default function UpdateProductPage() {
 	} = useForm({
 		defaultValues: {
 			barcode: product.barcode,
-			categoryId: product.categoryId,
+			categoryId: "",
 			description: product.description,
-			farmerId: product.farmerId,
+			farmerId: "",
 			isActive: product.isActive,
 			price: product.price,
 			salePrice: product.salePrice,

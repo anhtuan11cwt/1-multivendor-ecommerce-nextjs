@@ -1,40 +1,25 @@
 ﻿import { Pencil, Trash2 } from "lucide-react";
 import Link from "next/link";
 import PageHeader from "@/components/back-office/page-header";
-import TableActions from "@/components/back-office/table-actions";
 
-const mockCategories = [
-	{
-		createdAt: "12/08/2025",
-		description: "Các loại rau củ được trồng theo phương pháp hữu cơ",
-		id: "1",
-		slug: "rau-cu-huu-co",
-		title: "Rau củ hữu cơ",
-	},
-	{
-		createdAt: "10/08/2025",
-		description: "Trái cây tươi từ các vùng miền nhiệt đới",
-		id: "2",
-		slug: "trai-cay-nhiet-doi",
-		title: "Trái cây nhiệt đới",
-	},
-	{
-		createdAt: "08/08/2025",
-		description: "Sản phẩm thực phẩm đã qua chế biến sẵn",
-		id: "3",
-		slug: "thuc-pham-che-bien",
-		title: "Thực phẩm chế biến",
-	},
-	{
-		createdAt: "05/08/2025",
-		description: "Các loại ngũ cốc và đậu hạt dinh dưỡng",
-		id: "4",
-		slug: "ngu-coc-beans",
-		title: "Ngũ cốc & Beans",
-	},
-];
+const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "";
 
-export default function CategoriesPage() {
+async function getCategories() {
+	try {
+		const res = await fetch(`${BASE_URL}/api/categories`, {
+			cache: "no-store",
+		});
+		if (!res.ok) return [];
+		const json = await res.json();
+		return json.data || [];
+	} catch {
+		return [];
+	}
+}
+
+export default async function CategoriesPage() {
+	const categories = await getCategories();
+
 	return (
 		<div>
 			<PageHeader
@@ -42,7 +27,6 @@ export default function CategoriesPage() {
 				href="/dashboard/categories/new"
 				linkTitle="Thêm danh mục"
 			/>
-			<TableActions />
 
 			<div className="mt-4 overflow-x-auto rounded-lg bg-white shadow dark:bg-slate-800">
 				<table className="w-full text-left text-sm">
@@ -57,7 +41,7 @@ export default function CategoriesPage() {
 						</tr>
 					</thead>
 					<tbody>
-						{mockCategories.map((cat, i) => (
+						{categories.map((cat, i) => (
 							<tr
 								className="border-slate-100 border-b last:border-0 dark:border-slate-700/50"
 								key={cat.id}
@@ -75,7 +59,7 @@ export default function CategoriesPage() {
 									{cat.description}
 								</td>
 								<td className="px-4 py-3 text-slate-500 dark:text-slate-400">
-									{cat.createdAt}
+									{new Date(cat.createdAt).toLocaleDateString("vi-VN")}
 								</td>
 								<td className="px-4 py-3">
 									<div className="flex items-center gap-2">
@@ -95,6 +79,16 @@ export default function CategoriesPage() {
 								</td>
 							</tr>
 						))}
+						{categories.length === 0 && (
+							<tr>
+								<td
+									className="px-4 py-10 text-center text-slate-500 dark:text-slate-400"
+									colSpan={6}
+								>
+									Chưa có danh mục nào.
+								</td>
+							</tr>
+						)}
 					</tbody>
 				</table>
 			</div>

@@ -17,14 +17,11 @@ import { makePostRequest } from "@/lib/api-request";
 import { generateSlug } from "@/lib/generate-slug";
 import { trainingFormSchema } from "@/lib/schemas";
 import { uploadImageToCloudinary } from "@/lib/upload-image";
-
-const categoryOptions = [
-	{ id: "1", title: "Rau củ hữu cơ" },
-	{ id: "2", title: "Trái cây nhiệt đới" },
-];
+import { useOptions } from "@/lib/use-options";
 
 export default function NewTrainingPage() {
 	const router = useRouter();
+	const categoryOptions = useOptions("api/categories");
 	const {
 		register,
 		control,

@@ -3,6 +3,20 @@ import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { trainingSchema } from "@/lib/schemas";
 
+export async function GET() {
+	try {
+		const trainings = await db.training.findMany({
+			orderBy: { createdAt: "desc" },
+		});
+		return NextResponse.json({ data: trainings }, { status: 200 });
+	} catch (error) {
+		return NextResponse.json(
+			{ message: error.message || "Lỗi lấy danh sách bài đào tạo" },
+			{ status: 500 },
+		);
+	}
+}
+
 export async function POST(request) {
 	try {
 		const body = await request.json();

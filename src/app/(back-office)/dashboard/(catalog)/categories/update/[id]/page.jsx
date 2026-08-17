@@ -7,7 +7,6 @@ import { useForm } from "react-hook-form";
 
 import FormHeader from "@/components/back-office/form-inputs/form-header";
 import ImageInput from "@/components/back-office/form-inputs/image-input";
-import SelectInput from "@/components/back-office/form-inputs/select-input";
 import SubmitButton from "@/components/back-office/form-inputs/submit-button";
 import TextAreaInput from "@/components/back-office/form-inputs/text-area-input";
 import TextInput from "@/components/back-office/form-inputs/text-input";
@@ -16,11 +15,6 @@ import { makePutRequest } from "@/lib/api-request";
 import { generateSlug } from "@/lib/generate-slug";
 import { categorySchema } from "@/lib/schemas";
 import { uploadImageToCloudinary } from "@/lib/upload-image";
-
-const marketOptions = [
-	{ id: "1", title: "Chợ Sprouts Farmers" },
-	{ id: "2", title: "Chợ Long An" },
-];
 
 const mockData = {
 	1: {
@@ -113,15 +107,6 @@ export default function UpdateCategoryPage() {
 						file={file}
 						label="Hình ảnh danh mục"
 						setFile={setFile}
-					/>
-					<SelectInput
-						disabled={loading}
-						errors={errors}
-						label="Chợ liên kết"
-						multiple
-						name="marketIds"
-						options={marketOptions}
-						register={register}
 					/>
 					<TextAreaInput
 						className="col-span-2"

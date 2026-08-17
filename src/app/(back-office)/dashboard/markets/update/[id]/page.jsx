@@ -7,6 +7,7 @@ import { useForm } from "react-hook-form";
 
 import FormHeader from "@/components/back-office/form-inputs/form-header";
 import ImageInput from "@/components/back-office/form-inputs/image-input";
+import SelectInput from "@/components/back-office/form-inputs/select-input";
 import SubmitButton from "@/components/back-office/form-inputs/submit-button";
 import TextAreaInput from "@/components/back-office/form-inputs/text-area-input";
 import TextInput from "@/components/back-office/form-inputs/text-input";
@@ -15,9 +16,11 @@ import { makePutRequest } from "@/lib/api-request";
 import { generateSlug } from "@/lib/generate-slug";
 import { marketFormSchema } from "@/lib/schemas";
 import { uploadImageToCloudinary } from "@/lib/upload-image";
+import { useOptions } from "@/lib/use-options";
 
 const mockData = {
 	1: {
+		categoryIds: ["1"],
 		description: "Chợ đầu mối rau củ tại Long An",
 		isActive: true,
 		slug: "sprouts-farmers-market",
@@ -31,11 +34,14 @@ export default function UpdateMarketPage() {
 	const id = params?.id;
 
 	const market = mockData[id] || {
+		categoryIds: [],
 		description: "",
 		isActive: true,
 		slug: "",
 		title: "",
 	};
+
+	const categoryOptions = useOptions("api/categories");
 
 	const {
 		register,
@@ -44,6 +50,7 @@ export default function UpdateMarketPage() {
 		formState: { errors },
 	} = useForm({
 		defaultValues: {
+			categoryIds: [],
 			description: market.description,
 			isActive: market.isActive,
 			title: market.title,
@@ -97,6 +104,16 @@ export default function UpdateMarketPage() {
 						isRequired
 						label="Tên chợ"
 						name="title"
+						register={register}
+					/>
+					<SelectInput
+						className="col-span-2"
+						disabled={loading}
+						errors={errors}
+						label="Chọn danh mục"
+						multiple
+						name="categoryIds"
+						options={categoryOptions}
 						register={register}
 					/>
 					<ImageInput

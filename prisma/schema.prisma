@@ -7,6 +7,93 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum UserRole {
+  ADMIN
+  FARMER
+  CUSTOMER
+  MODERATOR
+  USER
+}
+
+model User {
+  id            String    @id @default(auto()) @map("_id") @db.ObjectId
+  name          String?
+  email         String    @unique
+  emailVerified DateTime?
+  image         String?
+  role          UserRole  @default(USER)
+  farmerProfile Farmer?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
+
+model Farmer {
+  id                 String    @id @default(auto()) @map("_id") @db.ObjectId
+  code               String
+  name               String
+  phone              String
+  email              String
+  physicalAddress    String?
+  contactPerson      String?
+  contactPersonPhone String?
+  paymentTerms       String?
+  notes              String?
+  isActive           Boolean   @default(false)
+  profileImageUrl    String?
+  userId             String?   @unique @db.ObjectId
+  user               User?     @relation(fields: [userId], references: [id])
+  products           Product[]
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+}
+
+model Category {
+  id          String    @id @default(auto()) @map("_id") @db.ObjectId
+  title       String
+  slug        String    @unique
+  imageUrl    String?
+  description String?
+  isActive    Boolean   @default(true)
+  marketIds   String[]  @db.ObjectId
+  markets     Market[]  @relation(fields: [marketIds], references: [id])
+  products    Product[]
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model Market {
+  id          String     @id @default(auto()) @map("_id") @db.ObjectId
+  title       String
+  slug        String     @unique
+  logo        String?
+  description String?
+  isActive    Boolean    @default(true)
+  categoryIds String[]   @db.ObjectId
+  categories  Category[] @relation(fields: [categoryIds], references: [id])
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+}
+
+model Product {
+  id          String    @id @default(auto()) @map("_id") @db.ObjectId
+  title       String
+  slug        String    @unique
+  description String?
+  imageUrl    String?
+  sku         String?
+  barcode     String?
+  price       Float
+  salePrice   Float?
+  tags        String[]
+  isActive    Boolean   @default(true)
+  categoryId  String    @db.ObjectId
+  category    Category  @relation(fields: [categoryId], references: [id])
+  farmerId    String    @db.ObjectId
+  farmer      Farmer    @relation(fields: [farmerId], references: [id])
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
 model Coupon {
   id         String   @id @default(auto()) @map("_id") @db.ObjectId
   title      String

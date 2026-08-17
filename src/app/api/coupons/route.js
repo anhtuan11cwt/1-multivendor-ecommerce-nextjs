@@ -4,6 +4,20 @@ import { db } from "@/lib/db";
 import { generateISOFormattedDate } from "@/lib/iso-formatted-date";
 import { couponSchema } from "@/lib/schemas";
 
+export async function GET() {
+	try {
+		const coupons = await db.coupon.findMany({
+			orderBy: { createdAt: "desc" },
+		});
+		return NextResponse.json({ data: coupons }, { status: 200 });
+	} catch (error) {
+		return NextResponse.json(
+			{ message: error.message || "Lỗi lấy danh sách mã giảm giá" },
+			{ status: 500 },
+		);
+	}
+}
+
 export async function POST(request) {
 	try {
 		const body = await request.json();

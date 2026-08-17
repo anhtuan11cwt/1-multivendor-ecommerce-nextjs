@@ -17,11 +17,7 @@ import { makePutRequest } from "@/lib/api-request";
 import { generateSlug } from "@/lib/generate-slug";
 import { trainingFormSchema } from "@/lib/schemas";
 import { uploadImageToCloudinary } from "@/lib/upload-image";
-
-const categoryOptions = [
-	{ id: "1", title: "Rau củ hữu cơ" },
-	{ id: "2", title: "Trái cây nhiệt đới" },
-];
+import { useOptions } from "@/lib/use-options";
 
 const mockData = {
 	1: {
@@ -46,6 +42,8 @@ export default function UpdateTrainingPage() {
 		title: "",
 	};
 
+	const categoryOptions = useOptions("api/categories");
+
 	const {
 		register,
 		control,
@@ -53,7 +51,7 @@ export default function UpdateTrainingPage() {
 		formState: { errors },
 	} = useForm({
 		defaultValues: {
-			categoryId: training.categoryId,
+			categoryId: "",
 			description: training.description,
 			isActive: training.isActive,
 			title: training.title,

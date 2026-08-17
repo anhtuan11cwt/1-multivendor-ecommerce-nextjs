@@ -2,17 +2,22 @@ import { Pencil, Trash2 } from "lucide-react";
 import Link from "next/link";
 import PageHeader from "@/components/back-office/page-header";
 
-const mockMarkets = [
-	{
-		createdAt: "15/08/2025",
-		description: "Chợ đầu mối rau củ tại Long An",
-		id: "1",
-		slug: "sprouts-farmers-market",
-		title: "Chợ Sprouts Farmers",
-	},
-];
+const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "";
 
-export default function MarketsPage() {
+async function getMarkets() {
+	try {
+		const res = await fetch(`${BASE_URL}/api/markets`, { cache: "no-store" });
+		if (!res.ok) return [];
+		const json = await res.json();
+		return json.data || [];
+	} catch {
+		return [];
+	}
+}
+
+export default async function MarketsPage() {
+	const markets = await getMarkets();
+
 	return (
 		<div>
 			<PageHeader
@@ -34,7 +39,7 @@ export default function MarketsPage() {
 						</tr>
 					</thead>
 					<tbody>
-						{mockMarkets.map((market, i) => (
+						{markets.map((market, i) => (
 							<tr
 								className="border-slate-100 border-b last:border-0 dark:border-slate-700/50"
 								key={market.id}
@@ -52,7 +57,7 @@ export default function MarketsPage() {
 									{market.description}
 								</td>
 								<td className="px-4 py-3 text-slate-500 dark:text-slate-400">
-									{market.createdAt}
+									{new Date(market.createdAt).toLocaleDateString("vi-VN")}
 								</td>
 								<td className="px-4 py-3">
 									<div className="flex items-center gap-2">
@@ -72,6 +77,16 @@ export default function MarketsPage() {
 								</td>
 							</tr>
 						))}
+						{markets.length === 0 && (
+							<tr>
+								<td
+									className="px-4 py-10 text-center text-slate-500 dark:text-slate-400"
+									colSpan={6}
+								>
+									Chưa có chợ nào.
+								</td>
+							</tr>
+						)}
 					</tbody>
 				</table>
 			</div>

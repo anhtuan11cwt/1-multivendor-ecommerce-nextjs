@@ -2,18 +2,22 @@ import { Pencil, Trash2 } from "lucide-react";
 import Link from "next/link";
 import PageHeader from "@/components/back-office/page-header";
 
-const mockFarmers = [
-	{
-		code: "LFF-NVA-250801100000",
-		createdAt: "01/08/2025",
-		email: "an@example.com",
-		id: "1",
-		name: "Nguyễn Văn An",
-		phone: "0901234567",
-	},
-];
+const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "";
 
-export default function FarmersPage() {
+async function getFarmers() {
+	try {
+		const res = await fetch(`${BASE_URL}/api/farmers`, { cache: "no-store" });
+		if (!res.ok) return [];
+		const json = await res.json();
+		return json.data || [];
+	} catch {
+		return [];
+	}
+}
+
+export default async function FarmersPage() {
+	const farmers = await getFarmers();
+
 	return (
 		<div>
 			<PageHeader
@@ -31,12 +35,13 @@ export default function FarmersPage() {
 							<th className="px-4 py-3 font-medium">Mã</th>
 							<th className="px-4 py-3 font-medium">Số điện thoại</th>
 							<th className="px-4 py-3 font-medium">Email</th>
+							<th className="px-4 py-3 font-medium">Trạng thái</th>
 							<th className="px-4 py-3 font-medium">Ngày tạo</th>
 							<th className="px-4 py-3 font-medium">Hành động</th>
 						</tr>
 					</thead>
 					<tbody>
-						{mockFarmers.map((farmer, i) => (
+						{farmers.map((farmer, i) => (
 							<tr
 								className="border-slate-100 border-b last:border-0 dark:border-slate-700/50"
 								key={farmer.id}
@@ -56,8 +61,19 @@ export default function FarmersPage() {
 								<td className="px-4 py-3 text-slate-500 dark:text-slate-400">
 									{farmer.email}
 								</td>
+								<td className="px-4 py-3">
+									<span
+										className={`rounded-full px-2 py-0.5 font-medium text-xs ${
+											farmer.isActive
+												? "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-400"
+												: "bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-400"
+										}`}
+									>
+										{farmer.isActive ? "Đang hoạt động" : "Chờ xác minh"}
+									</span>
+								</td>
 								<td className="px-4 py-3 text-slate-500 dark:text-slate-400">
-									{farmer.createdAt}
+									{new Date(farmer.createdAt).toLocaleDateString("vi-VN")}
 								</td>
 								<td className="px-4 py-3">
 									<div className="flex items-center gap-2">
@@ -77,6 +93,16 @@ export default function FarmersPage() {
 								</td>
 							</tr>
 						))}
+						{farmers.length === 0 && (
+							<tr>
+								<td
+									className="px-4 py-10 text-center text-slate-500 dark:text-slate-400"
+									colSpan={8}
+								>
+									Chưa có nông dân nào.
+								</td>
+							</tr>
+						)}
 					</tbody>
 				</table>
 			</div>

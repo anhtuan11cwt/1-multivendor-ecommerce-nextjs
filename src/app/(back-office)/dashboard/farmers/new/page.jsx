@@ -6,12 +6,14 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 
 import FormHeader from "@/components/back-office/form-inputs/form-header";
+import ImageInput from "@/components/back-office/form-inputs/image-input";
 import SubmitButton from "@/components/back-office/form-inputs/submit-button";
 import TextAreaInput from "@/components/back-office/form-inputs/text-area-input";
 import TextInput from "@/components/back-office/form-inputs/text-input";
 import ToggleInput from "@/components/back-office/form-inputs/toggle-input";
 import { makePostRequest } from "@/lib/api-request";
 import { farmerSchema } from "@/lib/schemas";
+import { uploadImageToCloudinary } from "@/lib/upload-image";
 import { restrictDigits } from "@/lib/utils";
 
 export default function NewFarmerPage() {
@@ -25,21 +27,26 @@ export default function NewFarmerPage() {
 		defaultValues: { isActive: false },
 		resolver: zodResolver(farmerSchema),
 	});
+	const [file, setFile] = useState(null);
 	const [loading, setLoading] = useState(false);
 
 	async function onSubmit(data) {
 		setLoading(true);
 		try {
 			await new Promise((r) => setTimeout(r, 2000));
-			const result = await makePostRequest({
-				data,
+			let profileImageUrl = "";
+			if (file) {
+				profileImageUrl = await uploadImageToCloudinary(file, "farmers");
+				if (!profileImageUrl) return;
+			}
+			const payload = { ...data, profileImageUrl };
+			await makePostRequest({
+				data: payload,
 				endpoint: "api/farmers",
+				redirect: () => router.push("/dashboard/farmers"),
 				resourceName: "Nông dân",
 				setLoading,
 			});
-			if (result) {
-				router.push("/dashboard/farmers");
-			}
 		} finally {
 			setLoading(false);
 		}
@@ -91,6 +98,13 @@ export default function NewFarmerPage() {
 						label="Địa chỉ"
 						name="physicalAddress"
 						register={register}
+					/>
+					<ImageInput
+						className="col-span-2"
+						disabled={loading}
+						file={file}
+						label="Ảnh đại diện"
+						setFile={setFile}
 					/>
 					<TextInput
 						disabled={loading}

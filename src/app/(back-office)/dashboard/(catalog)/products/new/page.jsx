@@ -17,19 +17,12 @@ import { makePostRequest } from "@/lib/api-request";
 import { generateSlug } from "@/lib/generate-slug";
 import { productFormSchema } from "@/lib/schemas";
 import { uploadImageToCloudinary } from "@/lib/upload-image";
-
-const categoryOptions = [
-	{ id: "1", title: "Rau củ hữu cơ" },
-	{ id: "2", title: "Trái cây nhiệt đới" },
-];
-
-const farmerOptions = [
-	{ id: "1", title: "Nguyễn Văn An" },
-	{ id: "2", title: "Trần Thị Mai" },
-];
+import { useOptions } from "@/lib/use-options";
 
 export default function NewProductPage() {
 	const router = useRouter();
+	const categoryOptions = useOptions("api/categories");
+	const farmerOptions = useOptions("api/farmers");
 	const {
 		register,
 		control,
