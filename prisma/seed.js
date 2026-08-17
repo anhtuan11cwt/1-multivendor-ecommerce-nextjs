@@ -362,6 +362,27 @@ const marketList = [
 		slug: "cho-huu-co-saigon",
 		title: "Chợ Hữu Cơ Sài Gòn",
 	},
+	{
+		categorySlugs: ["vegetables", "fruits", "drinks", "bakery"],
+		description: "Chợ hiện đại trong khu đô thị Phú Mỹ Hưng",
+		logo: "/bottom_banner_image.png",
+		slug: "cho-phu-my-hung",
+		title: "Chợ Phú Mỹ Hưng",
+	},
+	{
+		categorySlugs: ["vegetables", "grains", "dairy"],
+		description: "Chợ đầu mối rau củ quả tại Hóc Môn",
+		logo: "/organic_vegitable_image.png",
+		slug: "cho-hoc-mon",
+		title: "Chợ Hóc Môn",
+	},
+	{
+		categorySlugs: ["bakery", "instant", "fruits"],
+		description: "Chợ truyền thống giữa lòng quận Bình Thạnh",
+		logo: "/bakery_image.png",
+		slug: "cho-ba-chieu",
+		title: "Chợ Bà Chiểu",
+	},
 ];
 
 const bannerList = [
@@ -430,6 +451,30 @@ const trainingList = [
 		imageUrl: "/fresh_fruits_image.png",
 		slug: "quy-trinh-cham-soc-trai-cay",
 		title: "Quy trình chăm sóc trái cây",
+	},
+	{
+		categorySlug: "dairy",
+		content: "Hướng dẫn chăn nuôi an toàn sinh học cho gia súc, gia cầm...",
+		description: "Chăn nuôi gia súc, gia cầm an toàn sinh học",
+		imageUrl: "/eggs_image.png",
+		slug: "ky-thuat-chan-nuoi-an-toan",
+		title: "Kỹ thuật chăn nuôi an toàn",
+	},
+	{
+		categorySlug: "grains",
+		content: "Giới thiệu các công nghệ hỗ trợ canh tác và quản lý nông trại...",
+		description: "Ứng dụng công nghệ hiện đại vào canh tác",
+		imageUrl: "/grain_image.png",
+		slug: "ung-dung-cong-nghe-nong-nghiep",
+		title: "Ứng dụng công nghệ trong nông nghiệp",
+	},
+	{
+		categorySlug: "fruits",
+		content: "Chia sẻ kinh nghiệm bán nông sản online hiệu quả...",
+		description: "Kinh nghiệm bán nông sản online hiệu quả",
+		imageUrl: "/maggi_image.png",
+		slug: "ky-nang-ban-hang-online",
+		title: "Kỹ năng bán hàng online",
 	},
 ];
 

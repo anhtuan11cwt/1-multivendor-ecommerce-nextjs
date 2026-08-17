@@ -5,34 +5,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { Carousel, useCarousel } from "nuka-carousel";
 
-const banners = [
-	{
-		alt: "Banner rau củ sạch",
-		href: "/categories/vegetables",
-		src: "/main_banner_bg.png",
-	},
-	{
-		alt: "Banner nông sản tươi",
-		href: "/products",
-		src: "/bottom_banner_image.png",
-	},
-	{
-		alt: "Trái cây tươi ngon",
-		href: "/categories/fruits",
-		src: "/fresh_fruits_image.png",
-	},
-	{
-		alt: "Rau hữu cơ",
-		href: "/categories/vegetables",
-		src: "/organic_vegitable_image.png",
-	},
-	{
-		alt: "Sản phẩm sữa",
-		href: "/categories/dairy",
-		src: "/dairy_product_image.png",
-	},
-];
-
 function CarouselArrows() {
 	const { goBack, goForward } = useCarousel();
 	const buttonClassName =
@@ -83,7 +55,7 @@ function CarouselDots() {
 	);
 }
 
-export default function HeroCarousel() {
+export default function HeroCarousel({ banners }) {
 	return (
 		<div className="overflow-hidden rounded-md shadow-md">
 			<Carousel
@@ -97,15 +69,15 @@ export default function HeroCarousel() {
 			>
 				{banners.map((banner) => (
 					<Link
-						className="relative block h-48 sm:h-56 md:h-64 lg:h-72"
+						className="relative block h-48 w-full shrink-0 sm:h-56 md:h-64 lg:h-72"
 						href={banner.href}
-						key={banner.src}
+						key={banner.id}
 					>
 						<Image
 							alt={banner.alt}
 							className="object-cover"
 							fill
-							sizes="(max-width: 1024px) 100vw, 66vw"
+							sizes="(max-width: 1024px) 100vw, 50vw"
 							src={banner.src}
 						/>
 					</Link>
