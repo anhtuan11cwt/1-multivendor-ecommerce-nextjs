@@ -5,6 +5,12 @@ export function getTodayString() {
 	return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
 }
 
+export function getMaxBirthDateString() {
+	const now = new Date();
+	now.setFullYear(now.getFullYear() - 18);
+	return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
+}
+
 const vietnameseNamePattern =
 	/^[\p{Script=Latin}]+(?:[\s'-][\p{Script=Latin}]+)*$/u;
 
@@ -48,6 +54,21 @@ export const optionalVietnamPhoneSchema = z
 	.optional()
 	.refine((value) => !value || vietnamPhoneSchema.safeParse(value).success, {
 		message: "Số điện thoại phải gồm 10 chữ số và bắt đầu bằng số 0",
+	});
+
+export const vietnamCccdSchema = z
+	.string()
+	.trim()
+	.min(1, "Số CCCD là bắt buộc")
+	.refine((value) => /^[0-9]{12}$/.test(value), {
+		message: "Số CCCD phải gồm đúng 12 chữ số",
+	});
+
+export const optionalVietnamCccdSchema = z
+	.string()
+	.optional()
+	.refine((value) => !value || vietnamCccdSchema.safeParse(value).success, {
+		message: "Số CCCD phải gồm đúng 12 chữ số",
 	});
 
 export const categorySchema = z.object({
@@ -192,8 +213,48 @@ export const productFormSchema = productSchema.omit({
 });
 
 export const staffSchema = z.object({
+	cccd: optionalVietnamCccdSchema,
+	dateOfBirth: z
+		.string()
+		.optional()
+		.refine((value) => !value || !Number.isNaN(new Date(value).getTime()), {
+			message: "Ngày sinh không hợp lệ",
+		})
+		.refine(
+			(value) => !value || value <= getMaxBirthDateString(),
+			"Phải từ 18 tuổi trở lên",
+		),
 	email: z.string().email("Email không hợp lệ").min(1, "Email là bắt buộc"),
 	fullName: vietnameseNameSchema,
-	password: z.string().min(6, "Mật khẩu tối thiểu 6 ký tự"),
-	phone: z.string().optional(),
+	password: z
+		.string()
+		.min(8, "Mật khẩu tối thiểu 8 ký tự")
+		.refine(
+			(value) => /[a-zA-Z]/.test(value) && /\d/.test(value),
+			"Mật khẩu phải chứa ít nhất 1 chữ cái và 1 số",
+		),
+	phone: optionalVietnamPhoneSchema,
+});
+
+export const trainingSchema = z.object({
+	categoryId: z.string().min(1, "Vui lòng chọn danh mục"),
+	content: z.string().optional(),
+	description: z
+		.string()
+		.optional()
+		.refine((value) => !value || value.length <= 1000, {
+			message: "Mô tả tối đa 1000 ký tự",
+		}),
+	imageUrl: z.string().optional(),
+	isActive: z.boolean().default(true),
+	slug: z.string().min(1, "Slug là bắt buộc"),
+	title: z
+		.string()
+		.min(1, "Tiêu đề bài đào tạo là bắt buộc")
+		.max(100, "Tiêu đề tối đa 100 ký tự"),
+});
+
+export const trainingFormSchema = trainingSchema.omit({
+	imageUrl: true,
+	slug: true,
 });

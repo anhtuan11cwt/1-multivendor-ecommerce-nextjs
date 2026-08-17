@@ -10,6 +10,7 @@ export async function makeRequest({
 	reset,
 	method = "POST",
 	successMessage,
+	redirect,
 }) {
 	try {
 		setLoading(true);
@@ -25,6 +26,7 @@ export async function makeRequest({
 		const result = await res.json();
 		toast.success(successMessage || `${resourceName} đã được lưu thành công!`);
 		reset?.();
+		redirect?.();
 		return result;
 	} catch (error) {
 		toast.error(error.message || "Có lỗi xảy ra, vui lòng thử lại");

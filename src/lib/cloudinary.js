@@ -12,6 +12,7 @@ export const ALLOWED_UPLOAD_FOLDERS = [
 	"banners",
 	"markets",
 	"products",
+	"trainings",
 ];
 
 export function buildUploadSignature(params) {

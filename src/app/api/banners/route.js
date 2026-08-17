@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 
+import { db } from "@/lib/db";
 import { bannerSchema } from "@/lib/schemas";
 
 export async function POST(request) {
@@ -16,14 +17,14 @@ export async function POST(request) {
 			);
 		}
 		const { title, link, imageUrl, isActive } = parsed.data;
-		const newBanner = {
-			createdAt: new Date().toLocaleDateString("vi-VN"),
-			id: crypto.randomUUID(),
-			imageUrl,
-			isActive,
-			link: link || "",
-			title,
-		};
+		const newBanner = await db.banner.create({
+			data: {
+				imageUrl,
+				isActive,
+				link: link || "",
+				title,
+			},
+		});
 		console.log("Đã tạo banner:", newBanner);
 		return NextResponse.json({ data: newBanner }, { status: 201 });
 	} catch (error) {
@@ -52,13 +53,15 @@ export async function PUT(request) {
 			);
 		}
 		const { title, link, imageUrl, isActive } = parsed.data;
-		const updatedBanner = {
-			id,
-			imageUrl,
-			isActive,
-			link: link || "",
-			title,
-		};
+		const updatedBanner = await db.banner.update({
+			data: {
+				imageUrl,
+				isActive,
+				link: link || "",
+				title,
+			},
+			where: { id },
+		});
 		console.log("Đã cập nhật banner:", updatedBanner);
 		return NextResponse.json({ data: updatedBanner }, { status: 200 });
 	} catch (error) {

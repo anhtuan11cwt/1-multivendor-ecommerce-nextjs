@@ -3,6 +3,7 @@
 import {
 	ChevronDown,
 	FolderTree,
+	GraduationCap,
 	Image,
 	LayoutDashboard,
 	LogOut,
@@ -26,6 +27,7 @@ const catalogItems = [
 	{ href: "/dashboard/categories", icon: FolderTree, title: "Danh mục" },
 	{ href: "/dashboard/coupons", icon: TicketPercent, title: "Mã giảm giá" },
 	{ href: "/dashboard/banners", icon: Image, title: "Banner cửa hàng" },
+	{ href: "/dashboard/community", icon: GraduationCap, title: "Cộng đồng" },
 ];
 
 const navItems = [

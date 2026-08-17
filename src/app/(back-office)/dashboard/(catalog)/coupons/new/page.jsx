@@ -43,15 +43,13 @@ export default function NewCouponPage() {
 				...data,
 				couponCode: generateCouponCode(data.title, data.expiryDate),
 			};
-			const result = await makePostRequest({
+			await makePostRequest({
 				data: payload,
 				endpoint: "api/coupons",
+				redirect: () => router.push("/dashboard/coupons"),
 				resourceName: "Mã giảm giá",
 				setLoading,
 			});
-			if (result) {
-				router.push("/dashboard/coupons");
-			}
 		} finally {
 			setLoading(false);
 		}
