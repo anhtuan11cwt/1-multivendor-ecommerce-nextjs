@@ -129,8 +129,23 @@ export const bannerFormSchema = z.object(bannerFields);
 export const farmerSchema = z.object({
 	contactPerson: optionalVietnameseNameSchema,
 	contactPersonPhone: optionalVietnamPhoneSchema,
+	crops: z.array(z.string()).optional(),
 	email: z.string().email("Email không hợp lệ").min(1, "Email là bắt buộc"),
 	isActive: z.boolean().default(false),
+	landSize: z.preprocess(
+		(value) => {
+			if (value === "" || value === null || value === undefined) {
+				return undefined;
+			}
+			return Number(value);
+		},
+		z
+			.number({ message: "Diện tích đất phải là số" })
+			.refine((value) => !Number.isNaN(value), "Diện tích đất phải là số")
+			.min(0, "Diện tích đất không được âm")
+			.optional(),
+	),
+	mainCrop: z.string().optional(),
 	name: vietnameseNameSchema,
 	notes: z.string().optional(),
 	paymentTerms: z.string().optional(),
@@ -213,6 +228,23 @@ export const productFormSchema = productSchema.omit({
 	slug: true,
 });
 
+export const passwordSchema = z
+	.string()
+	.min(8, "Mật khẩu tối thiểu 8 ký tự")
+	.refine(
+		(value) => /[A-Z]/.test(value),
+		"Mật khẩu phải chứa ít nhất 1 chữ hoa",
+	)
+	.refine(
+		(value) => /[a-z]/.test(value),
+		"Mật khẩu phải chứa ít nhất 1 chữ thường",
+	)
+	.refine((value) => /\d/.test(value), "Mật khẩu phải chứa ít nhất 1 số")
+	.refine(
+		(value) => /[^A-Za-z0-9]/.test(value),
+		"Mật khẩu phải chứa ít nhất 1 ký tự đặc biệt",
+	);
+
 export const staffSchema = z.object({
 	cccd: optionalVietnamCccdSchema,
 	dateOfBirth: z
@@ -227,13 +259,7 @@ export const staffSchema = z.object({
 		),
 	email: z.string().email("Email không hợp lệ").min(1, "Email là bắt buộc"),
 	fullName: vietnameseNameSchema,
-	password: z
-		.string()
-		.min(8, "Mật khẩu tối thiểu 8 ký tự")
-		.refine(
-			(value) => /[a-zA-Z]/.test(value) && /\d/.test(value),
-			"Mật khẩu phải chứa ít nhất 1 chữ cái và 1 số",
-		),
+	password: passwordSchema,
 	phone: optionalVietnamPhoneSchema,
 });
 
@@ -258,4 +284,11 @@ export const trainingSchema = z.object({
 export const trainingFormSchema = trainingSchema.omit({
 	imageUrl: true,
 	slug: true,
+});
+
+export const userSchema = z.object({
+	email: z.string().email("Email không hợp lệ").min(1, "Email là bắt buộc"),
+	name: vietnameseNameSchema,
+	password: passwordSchema,
+	role: z.enum(["USER", "FARMER"]).optional(),
 });

@@ -42,30 +42,40 @@ export async function POST(request) {
 			notes,
 			isActive,
 			profileImageUrl,
+			landSize,
+			mainCrop,
+			crops,
 		} = parsed.data;
+		const { userId } = body;
 		const code = generateUserCode("LFF", name);
-		const user = await db.user.upsert({
-			create: { email, name, role: "FARMER" },
-			update: { name },
-			where: { email },
-		});
-		const newFarmer = await db.farmer.create({
-			data: {
-				code,
-				contactPerson: contactPerson || "",
-				contactPersonPhone: contactPersonPhone || "",
-				email,
-				isActive,
-				name,
-				notes: notes || "",
-				paymentTerms: paymentTerms || "",
-				phone,
-				physicalAddress: physicalAddress || "",
-				profileImageUrl: profileImageUrl || "",
-				userId: user.id,
-			},
-		});
-		console.log("Đã tạo nông dân:", newFarmer);
+		const data = {
+			code,
+			contactPerson: contactPerson || "",
+			contactPersonPhone: contactPersonPhone || "",
+			crops: crops || [],
+			email,
+			isActive,
+			landSize: landSize ?? null,
+			mainCrop: mainCrop || "",
+			name,
+			notes: notes || "",
+			paymentTerms: paymentTerms || "",
+			phone,
+			physicalAddress: physicalAddress || "",
+			profileImageUrl: profileImageUrl || "",
+		};
+
+		let newFarmer;
+		if (userId) {
+			newFarmer = await db.farmer.upsert({
+				create: { ...data, userId },
+				update: data,
+				where: { userId },
+			});
+		} else {
+			newFarmer = await db.farmer.create({ data });
+		}
+		console.log("Đã lưu nông dân:", newFarmer);
 		return NextResponse.json({ data: newFarmer }, { status: 201 });
 	} catch (error) {
 		return NextResponse.json(
@@ -103,6 +113,9 @@ export async function PUT(request) {
 			notes,
 			isActive,
 			profileImageUrl,
+			landSize,
+			mainCrop,
+			crops,
 		} = parsed.data;
 		const code = body.code || generateUserCode("LFF", name);
 		const updatedFarmer = await db.farmer.update({
@@ -110,8 +123,11 @@ export async function PUT(request) {
 				code,
 				contactPerson: contactPerson || "",
 				contactPersonPhone: contactPersonPhone || "",
+				crops: crops || [],
 				email,
 				isActive,
+				landSize: landSize ?? null,
+				mainCrop: mainCrop || "",
 				name,
 				notes: notes || "",
 				paymentTerms: paymentTerms || "",
@@ -122,14 +138,6 @@ export async function PUT(request) {
 			where: { id },
 		});
 		console.log("Đã cập nhật nông dân:", updatedFarmer);
-		if (updatedFarmer.userId) {
-			await db.user
-				.update({
-					data: { email, name },
-					where: { id: updatedFarmer.userId },
-				})
-				.catch(() => {});
-		}
 		return NextResponse.json({ data: updatedFarmer }, { status: 200 });
 	} catch (error) {
 		return NextResponse.json(

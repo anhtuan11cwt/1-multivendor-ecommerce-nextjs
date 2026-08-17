@@ -21,6 +21,7 @@ model User {
   email         String    @unique
   emailVerified DateTime?
   image         String?
+  password      String
   role          UserRole  @default(USER)
   farmerProfile Farmer?
   createdAt     DateTime  @default(now())
@@ -40,6 +41,9 @@ model Farmer {
   notes              String?
   isActive           Boolean   @default(false)
   profileImageUrl    String?
+  landSize           Float?
+  mainCrop           String?
+  crops              String[]
   userId             String?   @unique @db.ObjectId
   user               User?     @relation(fields: [userId], references: [id])
   products           Product[]

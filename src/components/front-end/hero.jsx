@@ -35,6 +35,12 @@ export default function Hero() {
 						Khám phá tài khoản demo
 						<ArrowRight className="size-5" />
 					</Link>
+					<Link
+						className="inline-flex min-h-11 items-center justify-center rounded-md px-6 py-3 font-semibold text-emerald-100 underline-offset-4 transition-colors hover:text-white hover:underline"
+						href="/register-farmer"
+					>
+						Become a Farmer
+					</Link>
 				</div>
 
 				<div className="mx-auto mt-16 max-w-3xl rounded-lg bg-white/10 p-4 shadow-2xl ring-1 ring-white/20 backdrop-blur-sm">

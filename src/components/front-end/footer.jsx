@@ -29,6 +29,12 @@ export default function Footer() {
 								{link.title}
 							</Link>
 						))}
+						<Link
+							className="text-slate-600 text-sm hover:text-slate-900 dark:text-slate-400 dark:hover:text-white"
+							href="/register-farmer"
+						>
+							Become a Farmer
+						</Link>
 					</nav>
 				</div>
 				<div className="mt-10 border-slate-200 border-t pt-6 dark:border-slate-800">
