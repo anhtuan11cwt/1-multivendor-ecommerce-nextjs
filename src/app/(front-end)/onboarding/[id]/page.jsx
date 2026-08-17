@@ -30,7 +30,7 @@ export default async function OnboardingPage({ params }) {
 	return (
 		<div className="mx-auto max-w-2xl px-4 py-16">
 			<h1 className="text-center font-bold text-2xl text-slate-900 dark:text-slate-100">
-				Hello {user.name}
+				Xin chào {user.name}
 			</h1>
 			<p className="mt-2 mb-8 text-center text-slate-600 dark:text-slate-400">
 				Hãy cho chúng tôi biết thêm về bạn

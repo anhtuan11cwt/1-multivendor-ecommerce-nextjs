@@ -350,3 +350,8 @@ export const userSchema = z.object({
 	password: passwordSchema,
 	role: z.enum(["USER", "FARMER"]).optional(),
 });
+
+export const loginSchema = z.object({
+	email: z.string().email("Email không hợp lệ").min(1, "Email là bắt buộc"),
+	password: z.string().min(1, "Mật khẩu là bắt buộc"),
+});

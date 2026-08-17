@@ -121,31 +121,53 @@ export default function RegisterForm({ userRole = "USER" }) {
 				/>
 			</div>
 
-			<p
-				className={`mt-6 text-center text-slate-600 text-sm transition dark:text-slate-400 ${loading ? "pointer-events-none opacity-50" : ""}`}
+			<div
+				className={`mt-6 flex flex-col items-center gap-2 text-center text-slate-600 text-sm transition dark:text-slate-400 ${loading ? "pointer-events-none opacity-50" : ""}`}
 			>
 				{userRole === "FARMER" ? (
 					<>
-						Bạn là khách hàng?{" "}
-						<Link
-							className="font-medium text-emerald-600 hover:text-emerald-700 dark:text-emerald-400"
-							href="/register"
-						>
-							Đăng ký tài khoản thường
-						</Link>
+						<p>
+							Bạn là khách hàng?{" "}
+							<Link
+								className="font-medium text-emerald-600 hover:text-emerald-700 dark:text-emerald-400"
+								href="/register"
+							>
+								Đăng ký tài khoản thường
+							</Link>
+						</p>
+						<p>
+							Đã có tài khoản?{" "}
+							<Link
+								className="font-medium text-emerald-600 hover:text-emerald-700 dark:text-emerald-400"
+								href="/login"
+							>
+								Đăng nhập
+							</Link>
+						</p>
 					</>
 				) : (
 					<>
-						Đã có tài khoản?{" "}
-						<Link
-							className="font-medium text-emerald-600 hover:text-emerald-700 dark:text-emerald-400"
-							href="/register-farmer"
-						>
-							Đăng ký nông dân
-						</Link>
+						<p>
+							Đã có tài khoản?{" "}
+							<Link
+								className="font-medium text-emerald-600 hover:text-emerald-700 dark:text-emerald-400"
+								href="/login"
+							>
+								Đăng nhập
+							</Link>
+						</p>
+						<p>
+							Bạn là nông dân?{" "}
+							<Link
+								className="font-medium text-emerald-600 hover:text-emerald-700 dark:text-emerald-400"
+								href="/register-farmer"
+							>
+								Đăng ký nông dân
+							</Link>
+						</p>
 					</>
 				)}
-			</p>
+			</div>
 		</form>
 	);
 }

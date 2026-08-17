@@ -1,95 +1,71 @@
 "use client";
 
-import { Menu, Moon, Sun, X } from "lucide-react";
+import { HelpCircle, ShoppingCart, User } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
-import { navLinks } from "@/components/front-end/nav-links";
-import { useTheme } from "@/lib/use-theme";
-import { cn } from "@/lib/utils";
+import HelpModal from "@/components/front-end/help-modal";
+import SearchForm from "@/components/front-end/search-form";
+import ThemeSwitcher from "@/components/front-end/theme-switcher";
+
+const iconLinkClassName =
+	"inline-flex size-10 items-center justify-center rounded-md text-slate-600 transition-colors hover:bg-slate-200/70 dark:text-slate-100 dark:hover:bg-slate-700";
 
 export default function Navbar() {
-	const { dark, toggleTheme } = useTheme();
-	const [menuOpen, setMenuOpen] = useState(false);
-
-	useEffect(() => {
-		if (!menuOpen) return;
-		function onKeyDown(event) {
-			if (event.key === "Escape") setMenuOpen(false);
-		}
-		window.addEventListener("keydown", onKeyDown);
-		return () => window.removeEventListener("keydown", onKeyDown);
-	}, [menuOpen]);
+	const [helpOpen, setHelpOpen] = useState(false);
 
 	return (
-		<header className="sticky top-0 z-50 border-slate-200 border-b bg-white/80 backdrop-blur dark:border-slate-800 dark:bg-slate-950/80">
-			<div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-4 px-4 lg:px-8">
-				<Link
-					className="font-bold text-lg text-slate-900 tracking-tight dark:text-slate-50"
-					href="/"
-				>
-					<span className="text-emerald-500 dark:text-emerald-400">E-</span>
-					Commerce
-				</Link>
-				<nav className="hidden items-center gap-1 md:flex">
-					{navLinks.map((link) => (
-						<Link
-							className={cn(
-								"rounded-md px-3 py-2 font-medium text-sm transition-colors",
-								link.primary
-									? "bg-emerald-600 text-white hover:bg-emerald-500"
-									: "text-slate-600 hover:text-slate-900 dark:text-slate-300 dark:hover:text-white",
-							)}
-							href={link.href}
-							key={link.href}
-						>
-							{link.title}
+		<>
+			<header className="sticky top-0 z-50 border-slate-200 border-b bg-white/90 backdrop-blur dark:border-slate-700 dark:bg-gray-800/90">
+				<div className="mx-auto max-w-7xl px-4 lg:px-8">
+					<div className="flex h-16 items-center justify-between gap-4">
+						<Link aria-label="Trang chủ" className="shrink-0" href="/">
+							<Image
+								alt="Logo"
+								className="h-auto dark:invert"
+								height={30}
+								priority
+								src="/logo.svg"
+								unoptimized
+								width={132}
+							/>
 						</Link>
-					))}
-				</nav>
-				<div className="flex items-center gap-1">
-					<button
-						aria-label={
-							dark ? "Chuyển sang chế độ sáng" : "Chuyển sang chế độ tối"
-						}
-						className="rounded-md p-2 text-slate-600 transition-colors hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800"
-						onClick={toggleTheme}
-						type="button"
-					>
-						{dark ? <Sun className="size-5" /> : <Moon className="size-5" />}
-					</button>
-					<button
-						aria-expanded={menuOpen}
-						aria-label="Mở menu"
-						className="rounded-md p-2 text-slate-600 transition-colors hover:bg-slate-100 md:hidden dark:text-slate-300 dark:hover:bg-slate-800"
-						onClick={() => setMenuOpen((value) => !value)}
-						type="button"
-					>
-						{menuOpen ? <X className="size-5" /> : <Menu className="size-5" />}
-					</button>
-				</div>
-			</div>
-			{menuOpen && (
-				<div className="border-slate-200 border-t bg-white px-4 py-4 md:hidden dark:border-slate-800 dark:bg-slate-950">
-					<nav className="flex flex-col gap-1">
-						{navLinks.map((link) => (
+						<div className="hidden min-w-0 flex-1 justify-center md:flex">
+							<SearchForm className="max-w-xl" />
+						</div>
+						<div className="flex shrink-0 items-center gap-1 lg:gap-1.5">
 							<Link
-								className={cn(
-									"rounded-md px-3 py-2.5 font-medium text-sm transition-colors",
-									link.primary
-										? "bg-emerald-600 text-center text-white hover:bg-emerald-500"
-										: "text-slate-700 hover:bg-slate-100 dark:text-slate-200 dark:hover:bg-slate-800",
-								)}
-								href={link.href}
-								key={link.href}
-								onClick={() => setMenuOpen(false)}
+								aria-label="Đăng nhập"
+								className={iconLinkClassName}
+								href="/login"
 							>
-								{link.title}
+								<User className="size-5" />
 							</Link>
-						))}
-					</nav>
+							<button
+								aria-label="Trợ giúp"
+								className={iconLinkClassName}
+								onClick={() => setHelpOpen(true)}
+								type="button"
+							>
+								<HelpCircle className="size-5" />
+							</button>
+							<Link
+								aria-label="Giỏ hàng"
+								className={iconLinkClassName}
+								href="/cart"
+							>
+								<ShoppingCart className="size-5" />
+							</Link>
+							<ThemeSwitcher />
+						</div>
+					</div>
+					<div className="pb-3 md:hidden">
+						<SearchForm />
+					</div>
 				</div>
-			)}
-		</header>
+			</header>
+			<HelpModal onClose={() => setHelpOpen(false)} show={helpOpen} />
+		</>
 	);
 }
