@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 
 import { db } from "@/lib/db";
+import { generateUserCode } from "@/lib/generate-user-code";
 import { productSchema } from "@/lib/schemas";
 
 export async function GET() {
@@ -43,6 +44,12 @@ export async function POST(request) {
 			farmerId,
 			tags,
 			isActive,
+			isWholesale,
+			wholesalePrice,
+			wholesaleQuantity,
+			unitOfMeasurement,
+			productStock,
+			quantity,
 		} = parsed.data;
 		const existing = await db.product.findUnique({ where: { slug } });
 		if (existing) {
@@ -51,6 +58,7 @@ export async function POST(request) {
 				{ status: 409 },
 			);
 		}
+		const productCode = generateUserCode("LP", title);
 		const newProduct = await db.product.create({
 			data: {
 				barcode: barcode || "",
@@ -59,12 +67,19 @@ export async function POST(request) {
 				farmerId,
 				imageUrl: imageUrl || "",
 				isActive,
+				isWholesale,
 				price,
+				productCode,
+				productStock: productStock ?? null,
+				quantity,
 				salePrice: salePrice ?? null,
 				sku: sku || "",
 				slug,
 				tags: tags || [],
 				title,
+				unitOfMeasurement: unitOfMeasurement || "",
+				wholesalePrice: wholesalePrice ?? null,
+				wholesaleQuantity: wholesaleQuantity ?? null,
 			},
 		});
 		console.log("Đã tạo sản phẩm:", newProduct);
@@ -107,7 +122,14 @@ export async function PUT(request) {
 			farmerId,
 			tags,
 			isActive,
+			isWholesale,
+			wholesalePrice,
+			wholesaleQuantity,
+			unitOfMeasurement,
+			productStock,
+			quantity,
 		} = parsed.data;
+		const productCode = body.productCode || generateUserCode("LP", title);
 		const updatedProduct = await db.product.update({
 			data: {
 				barcode: barcode || "",
@@ -116,12 +138,19 @@ export async function PUT(request) {
 				farmerId,
 				imageUrl: imageUrl || "",
 				isActive,
+				isWholesale,
 				price,
+				productCode,
+				productStock: productStock ?? null,
+				quantity,
 				salePrice: salePrice ?? null,
 				sku: sku || "",
 				slug,
 				tags: tags || [],
 				title,
+				unitOfMeasurement: unitOfMeasurement || "",
+				wholesalePrice: wholesalePrice ?? null,
+				wholesaleQuantity: wholesaleQuantity ?? null,
 			},
 			where: { id },
 		});

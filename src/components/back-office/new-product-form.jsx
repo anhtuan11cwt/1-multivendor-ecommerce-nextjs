@@ -1,7 +1,7 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useParams, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm, useWatch } from "react-hook-form";
 
@@ -13,88 +13,25 @@ import SubmitButton from "@/components/back-office/form-inputs/submit-button";
 import TextAreaInput from "@/components/back-office/form-inputs/text-area-input";
 import TextInput from "@/components/back-office/form-inputs/text-input";
 import ToggleInput from "@/components/back-office/form-inputs/toggle-input";
-import { makePutRequest } from "@/lib/api-request";
+import { makePostRequest } from "@/lib/api-request";
 import { generateSlug } from "@/lib/generate-slug";
 import { productFormSchema } from "@/lib/schemas";
 import { uploadImageToCloudinary } from "@/lib/upload-image";
-import { useOptions } from "@/lib/use-options";
 
-const mockData = {
-	1: {
-		barcode: "8934567890123",
-		categoryId: "1",
-		description: "Rau củ tươi trồng theo phương pháp hữu cơ",
-		farmerId: "1",
-		isActive: true,
-		isWholesale: false,
-		price: 45000,
-		productStock: 100,
-		quantity: 1,
-		salePrice: 40000,
-		sku: "SKU-001",
-		tags: ["Rau sạch", "Hữu cơ"],
-		title: "Bó rau muống hữu cơ",
-		unitOfMeasurement: "Kilograms",
-		wholesalePrice: 35000,
-		wholesaleQuantity: 50,
-	},
-};
-
-export default function UpdateProductPage() {
-	const params = useParams();
+export default function NewProductForm({ categories = [], farmers = [] }) {
 	const router = useRouter();
-	const id = params?.id;
-
-	const product = mockData[id] || {
-		barcode: "",
-		categoryId: "",
-		description: "",
-		farmerId: "",
-		isActive: true,
-		isWholesale: false,
-		price: "",
-		productStock: "",
-		quantity: 1,
-		salePrice: "",
-		sku: "",
-		tags: [],
-		title: "",
-		unitOfMeasurement: "",
-		wholesalePrice: "",
-		wholesaleQuantity: "",
-	};
-
-	const categoryOptions = useOptions("api/categories");
-	const farmerOptions = useOptions("api/farmers");
-
 	const {
 		register,
 		control,
 		handleSubmit,
 		formState: { errors },
 	} = useForm({
-		defaultValues: {
-			barcode: product.barcode,
-			categoryId: "",
-			description: product.description,
-			farmerId: "",
-			isActive: product.isActive,
-			isWholesale: product.isWholesale,
-			price: product.price,
-			productStock: product.productStock,
-			quantity: product.quantity,
-			salePrice: product.salePrice,
-			sku: product.sku,
-			title: product.title,
-			unitOfMeasurement: product.unitOfMeasurement,
-			wholesalePrice: product.wholesalePrice,
-			wholesaleQuantity: product.wholesaleQuantity,
-		},
+		defaultValues: { isActive: true, isWholesale: false, quantity: 1 },
 		resolver: zodResolver(productFormSchema),
 	});
 	const isWholesale = useWatch({ control, name: "isWholesale" });
 	const [file, setFile] = useState(null);
-	const [tags, setTags] = useState(product.tags);
+	const [tags, setTags] = useState([]);
 	const [loading, setLoading] = useState(false);
 
 	async function onSubmit(data) {
@@ -107,8 +44,8 @@ export default function UpdateProductPage() {
 				if (!imageUrl) return;
 			}
 			const slug = generateSlug(data.title);
-			const payload = { id, ...data, imageUrl, slug, tags };
-			await makePutRequest({
+			const payload = { ...data, imageUrl, slug, tags };
+			await makePostRequest({
 				data: payload,
 				endpoint: "api/products",
 				redirect: () => router.push("/dashboard/products"),
@@ -122,10 +59,7 @@ export default function UpdateProductPage() {
 
 	return (
 		<div className="mx-auto max-w-4xl">
-			<FormHeader
-				isLoading={loading}
-				title={`Chỉnh sửa sản phẩm - ${product.title}`}
-			/>
+			<FormHeader isLoading={loading} title="Tạo sản phẩm mới" />
 
 			<form
 				className="rounded-lg bg-white p-6 shadow dark:bg-slate-800"
@@ -173,6 +107,26 @@ export default function UpdateProductPage() {
 						name="salePrice"
 						register={register}
 						type="number"
+					/>
+					<SelectInput
+						disabled={loading}
+						errors={errors}
+						isRequired
+						label="Chọn danh mục"
+						name="categoryId"
+						options={categories}
+						placeholder="Chọn danh mục..."
+						register={register}
+					/>
+					<SelectInput
+						disabled={loading}
+						errors={errors}
+						isRequired
+						label="Chọn nông dân"
+						name="farmerId"
+						options={farmers}
+						placeholder="Chọn nông dân..."
+						register={register}
 					/>
 					<ToggleInput
 						className="col-span-2"
@@ -233,31 +187,11 @@ export default function UpdateProductPage() {
 						register={register}
 						type="number"
 					/>
-					<SelectInput
-						disabled={loading}
-						errors={errors}
-						isRequired
-						label="Chọn danh mục"
-						name="categoryId"
-						options={categoryOptions}
-						placeholder="Chọn danh mục..."
-						register={register}
-					/>
-					<SelectInput
-						disabled={loading}
-						errors={errors}
-						isRequired
-						label="Chọn nông dân"
-						name="farmerId"
-						options={farmerOptions}
-						placeholder="Chọn nông dân..."
-						register={register}
-					/>
 					<div className="col-span-2">
 						<ArrayItemsInput
 							disabled={loading}
 							items={tags}
-							itemTitle="Thẻ"
+							itemTitle="Tag"
 							setItems={setTags}
 						/>
 					</div>
@@ -286,20 +220,12 @@ export default function UpdateProductPage() {
 					/>
 				</div>
 
-				<div className="mt-6 flex justify-end gap-3">
+				<div className="mt-6 flex justify-end">
 					<SubmitButton
-						buttonTitle="Cập nhật"
+						buttonTitle="Tạo sản phẩm"
 						isLoading={loading}
-						loadingButtonTitle="Đang cập nhật..."
+						loadingButtonTitle="Đang tạo..."
 					/>
-					<button
-						className="inline-flex items-center gap-2 rounded-lg border border-slate-300 bg-white px-6 py-2.5 font-medium text-slate-700 text-sm shadow-sm transition hover:bg-slate-50 disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 dark:border-slate-600 dark:bg-transparent dark:text-slate-300 dark:hover:bg-slate-700"
-						disabled={loading}
-						onClick={() => router.back()}
-						type="button"
-					>
-						Hủy
-					</button>
 				</div>
 			</form>
 		</div>

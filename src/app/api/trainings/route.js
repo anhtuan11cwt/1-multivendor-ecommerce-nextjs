@@ -39,6 +39,13 @@ export async function POST(request) {
 			categoryId,
 			isActive,
 		} = parsed.data;
+		const existing = await db.training.findFirst({ where: { slug } });
+		if (existing) {
+			return NextResponse.json(
+				{ message: "Bài đào tạo đã tồn tại" },
+				{ status: 409 },
+			);
+		}
 		const newTraining = await db.training.create({
 			data: {
 				categoryId,

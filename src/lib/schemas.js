@@ -191,6 +191,7 @@ export const productSchema = z.object({
 	farmerId: z.string().min(1, "Vui lòng chọn nông dân"),
 	imageUrl: z.string().optional(),
 	isActive: z.boolean().default(true),
+	isWholesale: z.boolean().default(false),
 	price: z.preprocess(
 		(value) => {
 			if (value === "" || value === null || value === undefined) return 0;
@@ -200,6 +201,32 @@ export const productSchema = z.object({
 			.number({ message: "Giá phải là số" })
 			.refine((value) => !Number.isNaN(value), "Giá phải là số")
 			.min(15000, "Giá gốc tối thiểu 15.000đ"),
+	),
+	productCode: z.string().optional(),
+	productStock: z.preprocess(
+		(value) => {
+			if (value === "" || value === null || value === undefined) {
+				return undefined;
+			}
+			return Number(value);
+		},
+		z
+			.number({ message: "Tồn kho phải là số" })
+			.refine((value) => !Number.isNaN(value), "Tồn kho phải là số")
+			.int("Tồn kho phải là số nguyên")
+			.min(0, "Tồn kho không được âm")
+			.optional(),
+	),
+	quantity: z.preprocess(
+		(value) => {
+			if (value === "" || value === null || value === undefined) return 1;
+			return Number(value);
+		},
+		z
+			.number({ message: "Số lượng phải là số" })
+			.refine((value) => !Number.isNaN(value), "Số lượng phải là số")
+			.int("Số lượng phải là số nguyên")
+			.min(1, "Số lượng tối thiểu 1"),
 	),
 	salePrice: z.preprocess(
 		(value) => {
@@ -221,6 +248,37 @@ export const productSchema = z.object({
 		.string()
 		.min(1, "Tên sản phẩm là bắt buộc")
 		.max(100, "Tên sản phẩm tối đa 100 ký tự"),
+	unitOfMeasurement: z.string().optional(),
+	wholesalePrice: z.preprocess(
+		(value) => {
+			if (value === "" || value === null || value === undefined) {
+				return undefined;
+			}
+			return Number(value);
+		},
+		z
+			.number({ message: "Giá sỉ phải là số" })
+			.refine((value) => !Number.isNaN(value), "Giá sỉ phải là số")
+			.min(0, "Giá sỉ không được âm")
+			.optional(),
+	),
+	wholesaleQuantity: z.preprocess(
+		(value) => {
+			if (value === "" || value === null || value === undefined) {
+				return undefined;
+			}
+			return Number(value);
+		},
+		z
+			.number({ message: "Số lượng sỉ tối thiểu phải là số" })
+			.refine(
+				(value) => !Number.isNaN(value),
+				"Số lượng sỉ tối thiểu phải là số",
+			)
+			.int("Số lượng sỉ tối thiểu phải là số nguyên")
+			.min(1, "Số lượng sỉ tối thiểu là 1")
+			.optional(),
+	),
 });
 
 export const productFormSchema = productSchema.omit({
