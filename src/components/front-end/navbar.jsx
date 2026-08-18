@@ -8,12 +8,14 @@ import { useState } from "react";
 import HelpModal from "@/components/front-end/help-modal";
 import SearchForm from "@/components/front-end/search-form";
 import ThemeSwitcher from "@/components/front-end/theme-switcher";
+import { useCart } from "@/lib/cart-context";
 
 const iconLinkClassName =
 	"inline-flex size-10 items-center justify-center rounded-md text-slate-600 transition-colors hover:bg-slate-200/70 dark:text-slate-100 dark:hover:bg-slate-700";
 
 export default function Navbar() {
 	const [helpOpen, setHelpOpen] = useState(false);
+	const { totalCount } = useCart();
 
 	return (
 		<>
@@ -52,10 +54,15 @@ export default function Navbar() {
 							</button>
 							<Link
 								aria-label="Giỏ hàng"
-								className={iconLinkClassName}
+								className={`${iconLinkClassName} relative`}
 								href="/cart"
 							>
 								<ShoppingCart className="size-5" />
+								{totalCount > 0 && (
+									<span className="absolute -top-0.5 -right-0.5 flex size-4 items-center justify-center rounded-full bg-lime-600 font-bold text-[10px] text-white dark:bg-lime-400 dark:text-slate-950">
+										{totalCount > 99 ? "99+" : totalCount}
+									</span>
+								)}
 							</Link>
 							<ThemeSwitcher />
 						</div>

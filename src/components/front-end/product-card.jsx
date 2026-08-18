@@ -1,13 +1,14 @@
+"use client";
+
 import { ShoppingCart } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
-function formatPrice(value) {
-	if (value == null) return null;
-	return `${value.toLocaleString("vi-VN")}₫`;
-}
+import { useCart } from "@/lib/cart-context";
+import { formatVND } from "@/lib/frontend-data";
 
 export default function ProductCard({ className, product }) {
+	const { addItem } = useCart();
 	const hasSale =
 		product.salePrice != null && product.salePrice < product.price;
 
@@ -39,16 +40,17 @@ export default function ProductCard({ className, product }) {
 					<div className="flex flex-col">
 						{hasSale && (
 							<span className="text-slate-400 text-xs line-through">
-								{formatPrice(product.price)}
+								{formatVND(product.price)}
 							</span>
 						)}
 						<span className="font-bold text-lime-600 dark:text-lime-400">
-							{formatPrice(product.salePrice ?? product.price)}
+							{formatVND(product.salePrice ?? product.price)}
 						</span>
 					</div>
 					<button
 						aria-label={`Thêm ${product.title} vào giỏ`}
 						className="inline-flex size-10 shrink-0 items-center justify-center rounded-md bg-lime-600 text-white transition-colors hover:bg-lime-700 dark:bg-lime-500 dark:text-slate-950 dark:hover:bg-lime-400"
+						onClick={() => addItem(product)}
 						type="button"
 					>
 						<ShoppingCart className="size-5" />

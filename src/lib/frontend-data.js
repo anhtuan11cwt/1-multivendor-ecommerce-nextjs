@@ -1,5 +1,18 @@
 import { getData } from "@/lib/get-data";
 
+export function formatVND(value) {
+	if (value == null) return null;
+	return `${value.toLocaleString("vi-VN")}₫`;
+}
+
+export async function getProductBySlug(slug) {
+	return getData(`api/products/${encodeURIComponent(slug)}`);
+}
+
+export async function getCategoryById(id) {
+	return getData(`api/categories/${encodeURIComponent(id)}`);
+}
+
 export const fallbackCategories = [
 	{
 		id: "vegetables",
