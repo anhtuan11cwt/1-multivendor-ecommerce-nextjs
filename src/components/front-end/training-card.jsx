@@ -31,7 +31,7 @@ export default function TrainingCard({ className, training }) {
 				</p>
 				<div className="mt-4 flex items-center justify-between gap-2 pt-1">
 					<Link
-						className="rounded-md bg-slate-900 px-4 py-2 font-medium text-white text-xs transition-colors hover:bg-slate-700 dark:bg-slate-100 dark:text-slate-900 dark:hover:bg-white"
+						className="rounded-md bg-lime-600 px-4 py-2 font-medium text-white text-xs transition-colors hover:bg-lime-700 dark:bg-lime-500 dark:text-slate-950 dark:hover:bg-lime-400"
 						href={`/trainings/${training.slug}`}
 					>
 						Đọc thêm

@@ -161,6 +161,14 @@ export async function getCategories() {
 	return data.map((category) => ({
 		id: category.id,
 		imageUrl: category.imageUrl || "",
+		products: (category.products || []).map((product) => ({
+			id: product.id,
+			imageUrl: product.imageUrl || "",
+			price: product.price,
+			salePrice: product.salePrice,
+			slug: product.slug,
+			title: product.title,
+		})),
 		slug: category.slug || category.title,
 		title: category.title,
 	}));

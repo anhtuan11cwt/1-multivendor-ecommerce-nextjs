@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 
-export default function Sidebar({ categories }) {
+export default function SideBarCategories({ categories }) {
 	return (
 		<aside className="overflow-hidden rounded-md border border-slate-200 bg-white shadow-md dark:border-gray-600 dark:bg-slate-700">
 			<h2 className="border-slate-200 border-b bg-slate-100 px-4 py-3 font-semibold text-slate-900 text-sm dark:border-gray-600 dark:bg-slate-800 dark:text-slate-100">

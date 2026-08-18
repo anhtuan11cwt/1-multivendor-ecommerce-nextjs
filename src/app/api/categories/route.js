@@ -6,6 +6,7 @@ import { categorySchema } from "@/lib/schemas";
 export async function GET() {
 	try {
 		const categories = await db.category.findMany({
+			include: { products: true },
 			orderBy: { createdAt: "desc" },
 		});
 		return NextResponse.json({ data: categories }, { status: 200 });

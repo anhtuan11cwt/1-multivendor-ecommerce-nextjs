@@ -10,11 +10,11 @@ export default async function MarketList() {
 	return (
 		<section className="mx-auto max-w-7xl px-4 py-8 lg:px-8">
 			<div className="mb-5 flex items-center justify-between">
-				<h2 className="font-bold text-slate-900 text-xl dark:text-slate-100">
+				<h2 className="font-bold text-lime-600 text-xl dark:text-lime-400">
 					Chợ nông sản
 				</h2>
 				<Link
-					className="rounded-md bg-slate-900 px-4 py-2 font-medium text-sm text-white transition-colors hover:bg-slate-700 dark:bg-slate-100 dark:text-slate-900 dark:hover:bg-white"
+					className="rounded-md bg-lime-600 px-4 py-2 font-medium text-sm text-white transition-colors hover:bg-lime-700 dark:bg-lime-500 dark:text-slate-950 dark:hover:bg-lime-400"
 					href="/markets"
 				>
 					Xem tất cả
@@ -27,7 +27,7 @@ export default async function MarketList() {
 						href={`/markets/${market.slug}`}
 						key={market.id}
 					>
-						<div className="relative h-24 w-full overflow-hidden rounded-md">
+						<div className="relative h-24 w-full overflow-hidden rounded-2xl">
 							<Image
 								alt={market.title}
 								className="object-cover"
